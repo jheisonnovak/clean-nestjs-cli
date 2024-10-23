@@ -1,4 +1,5 @@
 import { Command } from "commander";
+import { AppGenerator } from "../generators/app.generator";
 
 export class NewCommand {
 	load(program: Command) {
@@ -7,6 +8,8 @@ export class NewCommand {
 			.alias("n")
 			.description("create a new clean project")
 			.option("--path <path>", "Specify the destination directory", "/")
-			.action((projectName, options) => {});
+			.action((projectName, options) => {
+				AppGenerator.generate(projectName, options);
+			});
 	}
 }

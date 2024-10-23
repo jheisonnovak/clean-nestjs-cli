@@ -2,3 +2,5 @@
 
 bin/*.js
 src/**/*.js
+bin/*.d.ts
+src/**/*.d.ts
