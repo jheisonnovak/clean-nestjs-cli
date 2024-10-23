@@ -7,7 +7,7 @@ export class NewCommand {
 			.command("new <project-name>")
 			.alias("n")
 			.description("create a new clean project")
-			.option("--path <path>", "Specify the destination directory", "/")
+			.option("--no-linters", "disable linters (default is enabled)")
 			.action((projectName, options) => {
 				AppGenerator.generate(projectName, options);
 			});

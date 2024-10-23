@@ -1,4 +1,4 @@
-export const packageElement = (projectName: string) => `{
+export const packageElement = (projectName: string, linters: boolean) => `{
 	"name": "${projectName}",
 	"version": "0.0.1",
 	"description": "",
@@ -6,13 +6,11 @@ export const packageElement = (projectName: string) => `{
 	"private": true,
 	"license": "UNLICENSED",
 	"scripts": {
-		"build": "nest build",
-		"format": "prettier --write \\"src/**/*.ts\\" \\"test/**/*.ts\\"",
+		"build": "nest build",${linters ? `\n		"format": "prettier --write \\"src/**/*.ts\\" \\"test/**/*.ts\\"",` : ""}
 		"start": "nest start",
 		"start:dev": "nest start --watch",
 		"start:debug": "nest start --debug --watch",
-		"start:prod": "node dist/main",
-		"lint": "eslint \\"{src,apps,libs,test}/**/*.ts\\" --fix",
+		"start:prod": "node dist/main",${linters ? `\n		"lint": "eslint \\"{src,apps,libs,test}/**/*.ts\\" --fix",` : ""}
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:cov": "jest --coverage",
@@ -33,14 +31,12 @@ export const packageElement = (projectName: string) => `{
 		"@types/express": "^4.17.17",
 		"@types/jest": "^29.5.2",
 		"@types/node": "^20.3.1",
-		"@types/supertest": "^6.0.0",
-		"@typescript-eslint/eslint-plugin": "^8.0.0",
-		"@typescript-eslint/parser": "^8.0.0",
-		"eslint": "^8.42.0",
-		"eslint-config-prettier": "^9.0.0",
-		"eslint-plugin-prettier": "^5.0.0",
-		"jest": "^29.5.0",
-		"prettier": "^3.0.0",
+		"@types/supertest": "^6.0.0",${linters ? `\n		"@typescript-eslint/eslint-plugin": "^8.0.0",` : ""}${
+	linters ? `\n		"@typescript-eslint/parser": "^8.0.0",` : ""
+}${linters ? `\n		"eslint": "^8.42.0",` : ""}${linters ? `\n		"eslint-config-prettier": "^9.0.0",` : ""}${
+	linters ? `\n		"eslint-plugin-prettier": "^5.0.0",` : ""
+}
+		"jest": "^29.5.0",${linters ? `\n		"prettier": "^3.0.0",` : ""}
 		"source-map-support": "^0.5.21",
 		"supertest": "^7.0.0",
 		"ts-jest": "^29.1.0",

@@ -5,34 +5,73 @@ import { appModuleElement } from "../elements/app-module.element";
 import { mainElement } from "../elements/main.element";
 import { gitIgnoreElement } from "../elements/gitignore.element";
 import { createFile } from "../utils/file";
-import { exec } from "child_process";
+import { prettierrcElement } from "../elements/prettierrc.element";
+import { eslintrcElement } from "../elements/eslintrc.element";
+import inquirer from "inquirer";
+import ora from "ora";
+import { executeCommand } from "../utils/execute-command";
+import { databaseConfigElement } from "../elements/database-config.element";
 
 export class AppGenerator {
-	static async generate(projectNameKebab: string, options: {}): Promise<void> {
+	static async generate(projectNameKebab: string, options: { linters: boolean }): Promise<void> {
 		const projectDir = path.join(process.cwd(), projectNameKebab);
 		const resourceArray = projectDir.split("\\");
 		const projectName = resourceArray[resourceArray.length - 1];
-		this.generateFiles(projectName, projectDir);
 
-		new Promise((resolve, reject) => {
-			exec("npm install --save", { cwd: projectDir }, (err, stdout, stderr) => {
-				if (err) {
-					reject(err);
+		inquirer
+			.prompt([
+				{
+					type: "list",
+					name: "packageManager",
+					message: "Choose your package manager",
+					choices: ["npm", "yarn"],
+					default: "npm",
+				},
+				{
+					type: "list",
+					name: "orm",
+					message: "Choose your ORM",
+					choices: ["TypeORM", "None"],
+					default: "TypeORM",
+				},
+			])
+			.then(async answers => {
+				const { packageManager, orm } = answers;
+				this.generateFiles(projectName, projectDir, options.linters, orm);
+				const commands: string[] = [];
+				commands.push(`${packageManager} install`);
+				if (orm === "TypeORM") {
+					commands.push(`${packageManager} install @nestjs/typeorm typeorm @nestjs/config`);
 				}
-				if (stderr) {
-					reject(stderr);
+
+				const spinner = ora("Installing dependencies...").start();
+				try {
+					for (const command of commands) {
+						await executeCommand(command, projectDir);
+					}
+					spinner.succeed("Dependencies installed");
+				} catch {
+					spinner.fail("Error installing dependencies");
 				}
-				resolve(stdout);
 			});
-		});
 	}
 
-	private static generateFiles(projectName: string, projectDir: string) {
+	private static generateFiles(projectName: string, projectDir: string, linters: boolean, orm: string) {
 		const tsConfigContent = tsconfigElement();
-		const packageContent = packageElement(projectName);
+		const packageContent = packageElement(projectName, true);
 		const appModuleContent = appModuleElement();
 		const mainContent = mainElement();
 		const gitIgnoreContent = gitIgnoreElement();
+		if (linters) {
+			const prettierrcContent = prettierrcElement();
+			const eslintrcContent = eslintrcElement();
+			createFile(path.join(projectDir, ".prettierrc"), prettierrcContent);
+			createFile(path.join(projectDir, ".eslintrc.js"), eslintrcContent);
+		}
+		if (orm === "TypeORM") {
+			const databaseConfigContent = databaseConfigElement();
+			createFile(path.join(projectDir, "src", "shared", "config", "database.config.service.ts"), databaseConfigContent);
+		}
 
 		createFile(path.join(projectDir, "tsconfig.json"), tsConfigContent);
 		createFile(path.join(projectDir, "package.json"), packageContent);
