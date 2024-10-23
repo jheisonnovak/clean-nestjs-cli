@@ -1,3 +1,3 @@
 export class IGenerator {
-	static generate(moduleNameKebab: string, modulePath: string = "", resourceNameKebab?: string) {}
+	static generate(moduleNameKebab: string, resourcePath: string = "", resourceNameKebab?: string) {}
 }

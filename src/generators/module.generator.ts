@@ -1,17 +1,18 @@
 import * as fs from "fs";
 import * as path from "path";
-import { execSync } from "child_process";
 import { capitalize, createFile, kebabToCamel } from "../utils/file";
 import { moduleElement } from "../elements/module.element";
 import { repositoryInterfaceElement } from "../elements/repository-interface.element";
 import { repositoryElement } from "../elements/repository.element";
 import { IGenerator } from "./generate.generator";
+import { createModulePath } from "../utils/create-module-path";
 
 export class ModuleGenerator extends IGenerator {
-	static override async generate(moduleNameKebab: string, modulePath: string = "") {
+	static override async generate(moduleNameKebab: string, resourcePath: string = "") {
 		const resourceNameCamel = kebabToCamel(moduleNameKebab);
 		const moduleName = capitalize(resourceNameCamel);
-		const resourceDir = path.join(__dirname, "../src/modules/", modulePath);
+		const modulePath = createModulePath(resourcePath, moduleNameKebab);
+		const resourceDir = path.join(process.cwd(), "./src/modules/", modulePath);
 
 		const moduleContent = moduleElement(moduleName, moduleNameKebab);
 		const repositoryInterfaceContent = repositoryInterfaceElement(moduleName);
