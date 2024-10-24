@@ -1,6 +1,10 @@
+<a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/v/clean-nestjs-cli.svg" alt ="NPM Version">
+<a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/l/clean-nestjs-cli.svg" alt ="License">
+<a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/dm/clean-nestjs-cli.svg" alt ="Downloads">
+
 # Description
 
-**Clean NestJS CLI** is a command-line interface tool designed to streamline the creation and management of NestJS projects following Clean Architecture principles.
+A command-line interface tool designed to streamline the creation and management of NestJS projects following Clean Architecture principles.
 
 ## Installation
 
