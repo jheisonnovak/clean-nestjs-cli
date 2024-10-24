@@ -1,0 +1,37 @@
+{
+	"name": "clean-nestjs-cli",
+	"version": "1.0.0",
+	"bin": {
+		"clean-nest": "./bin/index.js",
+		"cnest": "./bin/index.js"
+	},
+	"scripts": {
+		"build": "tsc"
+	},
+	"keywords": [
+		"nestjs",
+		"cli",
+		"clean",
+		"architecture"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/JheisonNovak/clean-nestjs-cli.git"
+	},
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/JheisonNovak/clean-nestjs-cli/issues"
+	},
+	"homepage": "https://github.com/JheisonNovak/clean-nestjs-cli#readme",
+	"dependencies": {
+		"commander": "^12.1.0",
+		"inquirer": "^12.0.0",
+		"ora": "^5.4.1"
+	},
+	"devDependencies": {
+		"@types/node": "^22.7.7",
+		"commander": "^12.1.0",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.6.3"
+	}
+}
