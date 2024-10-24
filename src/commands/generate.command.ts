@@ -7,14 +7,15 @@ export class GenerateCommand {
 			.command("generate <schematics> <module> [resource]")
 			.alias("g")
 			.description("generate a specified element")
-			.option("--path <path>", "Specify the destination directory inside /src/modules folder", "/")
+			.option("--path <path>", "specify the destination directory inside /src/modules folder", "/")
 			.action((element, module: string, resource: string, options) => {
 				const generator = getGenerator(element);
 				if (!generator) {
 					console.error(`"${element}" not found. Available schematics: [${Object.keys(generators).join(", ")}]`);
 					process.exit(1);
 				}
-				generator.generate(module, options.path, resource);
+				let moduleArray = module.split("/");
+				generator.generate(moduleArray[moduleArray.length - 1], options.path, resource);
 			});
 	}
 }

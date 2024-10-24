@@ -8,13 +8,12 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
 
 	createTypeOrmOptions(): TypeOrmModuleOptions {
 		return {
-			type: "sqlite",
-			//host: this.configService.get<string>("DB_ENV"),
-			//port: this.configService.get<number>("DB_ENV"),
-			//username: this.configService.get<string>("DB_ENV"),
-			//password: this.configService.get<string>("DB_ENV"),
-			//database: this.configService.get<string>("DB_ENV"),
-			database: "database.sqlite",
+			//type: "database",
+			host: this.configService.get<string>("DB_ENV"),
+			port: this.configService.get<number>("DB_ENV"),
+			username: this.configService.get<string>("DB_ENV"),
+			password: this.configService.get<string>("DB_ENV"),
+			database: this.configService.get<string>("DB_ENV"),
 			entities: [__dirname + "/../../**/*.entity.{js,ts}"],
 			synchronize: false,
 		};

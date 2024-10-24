@@ -7,6 +7,7 @@ import { controllerElement } from "../elements/controller.element";
 import { specElement } from "../elements/spec.element";
 import { ModuleGenerator } from "./module.generator";
 import { createModulePath } from "../utils/create-module-path";
+import { updateModuleFile } from "../utils/update-module-file";
 
 export class UseCaseGenerator extends IGenerator {
 	static override async generate(moduleNameKebab: string, resourcePath: string = "", resourceNameKebab?: string): Promise<void> {
@@ -23,7 +24,6 @@ export class UseCaseGenerator extends IGenerator {
 		const decapitalizedUseCaseName = decapitalize(useCaseNameCamel);
 
 		const useCaseDir = path.join(process.cwd(), "./src/modules", modulePath, "use-cases", resourceNameKebab);
-
 		const useCaseContent = useCaseElement(capitalizedUseCaseName);
 		const controllerContent = controllerElement(capitalizedUseCaseName, resourceNameKebab, modulePath, decapitalizedUseCaseName);
 		const specContent = specElement(
@@ -44,41 +44,20 @@ export class UseCaseGenerator extends IGenerator {
 		await createFile(path.join(useCaseDir, `${resourceNameKebab}.controller.ts`), controllerContent);
 		await createFile(path.join(useCaseDir, `${resourceNameKebab}.spec.ts`), specContent);
 
-		this.updateModuleFile(
-			moduleFilePath,
-			`${capitalizedUseCaseName}Controller`,
-			`${capitalizedUseCaseName}UseCase`,
-			`use-cases/${resourceNameKebab}/${resourceNameKebab}.controller`,
-			`use-cases/${resourceNameKebab}/${resourceNameKebab}.use-case`
-		);
-	}
+		const controllerName = `${capitalizedUseCaseName}Controller`;
+		const useCaseName = `${capitalizedUseCaseName}UseCase`;
+		const controllerPath = "./" + path.posix.join("use-cases", resourceNameKebab, `${resourceNameKebab}.controller`);
+		const useCasePath = "./" + path.posix.join("use-cases", resourceNameKebab, `${resourceNameKebab}.use-case`);
 
-	private static updateModuleFile(
-		moduleFilePath: string,
-		controllerName: string,
-		useCaseName: string,
-		controllerPath: string,
-		useCasePath: string
-	) {
-		if (!fs.existsSync(moduleFilePath)) {
-			console.warn(`Module file ${moduleFilePath} not found. Skipping import.`);
-			process.exit(1);
-		}
-
-		let moduleFileContent = fs.readFileSync(moduleFilePath, "utf8");
-
-		const importStatements = `
-import { ${controllerName} } from "./${controllerPath}";
-import { ${useCaseName} } from "./${useCasePath}";`;
-
-		if (!moduleFileContent.includes(importStatements.trim())) {
-			moduleFileContent = moduleFileContent.replace(/(import {.* from .*;)/, `$1${importStatements}`);
-		}
-
-		moduleFileContent = addToArray("controllers", controllerName, moduleFileContent);
-		moduleFileContent = addToArray("providers", useCaseName, moduleFileContent);
-		moduleFileContent = addToArray("exports", useCaseName, moduleFileContent);
-
-		fs.writeFileSync(moduleFilePath, moduleFileContent, "utf8");
+		updateModuleFile(moduleFilePath, {
+			arrayName: ["controllers"],
+			content: controllerName,
+			imports: [{ name: controllerName, path: controllerPath }],
+		});
+		updateModuleFile(moduleFilePath, {
+			arrayName: ["providers", "exports"],
+			content: useCaseName,
+			imports: [{ name: useCaseName, path: useCasePath }],
+		});
 	}
 }

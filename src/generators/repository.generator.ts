@@ -5,6 +5,8 @@ import { addToArray, capitalize, createFile, kebabToCamel } from "../utils/file"
 import { createModulePath } from "../utils/create-module-path";
 import { repositoryInterfaceElement } from "../elements/repository-interface.element";
 import { repositoryElement } from "../elements/repository.element";
+import { ModuleGenerator } from "./module.generator";
+import { updateModuleFile } from "../utils/update-module-file";
 
 export class RepositoryGenerator extends IGenerator {
 	static override async generate(moduleNameKebab: string, resourcePath: string = "", resourceNameKebab?: string): Promise<void> {
@@ -21,35 +23,31 @@ export class RepositoryGenerator extends IGenerator {
 
 		const repositoryContent = repositoryElement(repositoryName, resourceNameKebab);
 
+		const moduleFilePath = path.join(process.cwd(), "./src/modules", modulePath, `${moduleNameKebab}.module.ts`);
+		if (!fs.existsSync(moduleFilePath)) {
+			ModuleGenerator.generate(moduleNameKebab, resourcePath);
+		}
+
 		await createFile(path.join(resourceDir, "repositories", `${resourceNameKebab}.repository.ts`), repositoryContent);
 		await createFile(path.join(resourceDir, "models/interfaces", `${resourceNameKebab}-repository.interface.ts`), repositoryInterfaceContent);
 
-		const updateModuleFile = (moduleFilePath: string, repositoryName: string, repositoryPath: string) => {
-			if (!fs.existsSync(moduleFilePath)) {
-				console.warn(`Module file ${moduleFilePath} not found. Skipping import.`);
-				process.exit(1);
-			}
+		const repository = `${repositoryName}TypeOrmRepository`;
+		const repositoryInterface = `"I${repositoryName}Repository"`;
+		const repositoryProvider = `{
+		    provide: ${repositoryInterface},
+		    useExisting: ${repository}
+		}`;
+		const repositoryPath = `./repositories/${resourceNameKebab}.repository`;
 
-			let moduleFileContent = fs.readFileSync(moduleFilePath, "utf8");
-
-			const importStatement = `
-import { ${repositoryName}TypeOrmRepository } from "./${repositoryPath}";`;
-			const providersContent = `{
-            provide: "I${repositoryName}Repository",
-            useExisting: ${repositoryName}TypeOrmRepository
-        }`;
-
-			if (!moduleFileContent.includes(importStatement.trim())) {
-				moduleFileContent = moduleFileContent.replace(/(import {.* from .*;)/, `$1${importStatement}`);
-			}
-
-			moduleFileContent = addToArray("providers", `${repositoryName}TypeOrmRepository`, moduleFileContent);
-			moduleFileContent = addToArray("providers", providersContent, moduleFileContent);
-			moduleFileContent = addToArray("exports", `"I${repositoryName}Repository"`, moduleFileContent);
-
-			fs.writeFileSync(moduleFilePath, moduleFileContent, "utf8");
-		};
-
-		updateModuleFile(path.join(resourceDir, `${moduleNameKebab}.module.ts`), repositoryName, `repositories/${resourceNameKebab}.repository`);
+		updateModuleFile(moduleFilePath, {
+			arrayName: ["providers"],
+			content: repositoryProvider,
+			imports: [{ name: repository, path: repositoryPath }],
+		});
+		updateModuleFile(moduleFilePath, {
+			arrayName: ["exports"],
+			content: repositoryInterface,
+			imports: [],
+		});
 	}
 }

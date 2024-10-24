@@ -32,7 +32,6 @@ export class ModuleGenerator extends IGenerator {
 	}
 
 	private static updateModuleFile(moduleName: string, moduleNameKebab: string, modulePath: string) {
-		console.log(moduleNameKebab);
 		const moduleFilePath = path.posix.join("modules", path.posix.join(modulePath), `${moduleNameKebab}.module`);
 		const appModulePath = path.join(process.cwd(), "src", "app.module.ts");
 		if (!fs.existsSync(appModulePath)) {

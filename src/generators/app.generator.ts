@@ -19,7 +19,7 @@ export class AppGenerator {
 		const resourceArray = projectDir.split("\\");
 		const projectName = resourceArray[resourceArray.length - 1];
 		const questions = this.getQuestions();
-
+		console.clear();
 		inquirer
 			.prompt(questions)
 			.then(async answers => {
@@ -42,7 +42,7 @@ export class AppGenerator {
 					}
 					dependencies.succeed("Dependencies installed");
 				} catch {
-					dependencies.fail("Error installing dependencies, check if your package manager is installed");
+					dependencies.fail("Error installing dependencies, check your package manager");
 				}
 			})
 			.catch(() => console.log("Console has been closed"));
@@ -60,16 +60,15 @@ export class AppGenerator {
 			await createFile(path.join(projectDir, ".prettierrc"), prettierrcContent);
 			await createFile(path.join(projectDir, ".eslintrc.js"), eslintrcContent);
 		}
-		if (orm === "TypeORM") {
-			const databaseConfigContent = databaseConfigElement();
-			await createFile(path.join(projectDir, "src", "shared", "config", "database.config.service.ts"), databaseConfigContent);
-		}
-
 		await createFile(path.join(projectDir, "tsconfig.json"), tsConfigContent);
 		await createFile(path.join(projectDir, "package.json"), packageContent);
 		await createFile(path.join(projectDir, "src", "app.module.ts"), appModuleContent);
 		await createFile(path.join(projectDir, "src", "main.ts"), mainContent);
 		await createFile(path.join(projectDir, ".gitignore"), gitIgnoreContent);
+		if (orm === "TypeORM") {
+			const databaseConfigContent = databaseConfigElement();
+			await createFile(path.join(projectDir, "src", "shared", "config", "database.config.service.ts"), databaseConfigContent);
+		}
 	}
 
 	private static getQuestions() {
