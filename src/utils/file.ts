@@ -1,12 +1,18 @@
 import { writeFileSync, existsSync, mkdirSync } from "fs";
 import path from "path";
-
-export const createFile = (filePath: string, content: string) => {
+import { promises as fs } from "fs";
+export const createFile = async (filePath: string, content: string) => {
 	const dir = path.dirname(filePath);
-	if (!existsSync(dir)) {
-		mkdirSync(dir, { recursive: true });
+	try {
+		await fs.access(dir);
+	} catch {
+		await fs.mkdir(dir, { recursive: true });
 	}
-	writeFileSync(filePath, content, "utf8");
+	try {
+		await fs.writeFile(filePath, content, "utf8");
+	} catch (error) {
+		throw error;
+	}
 };
 
 export const createDirectory = (dirPath: string) => {

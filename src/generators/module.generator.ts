@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { capitalize, createFile, kebabToCamel } from "../utils/file";
+import { addToArray, capitalize, createFile, kebabToCamel } from "../utils/file";
 import { moduleElement } from "../elements/module.element";
 import { repositoryInterfaceElement } from "../elements/repository-interface.element";
 import { repositoryElement } from "../elements/repository.element";
@@ -18,9 +18,9 @@ export class ModuleGenerator extends IGenerator {
 		const repositoryInterfaceContent = repositoryInterfaceElement(moduleName);
 		const repositoryContent = repositoryElement(moduleName, moduleNameKebab);
 
-		createFile(path.join(resourceDir, `${moduleNameKebab}.module.ts`), moduleContent);
-		createFile(path.join(resourceDir, "repositories", `${moduleNameKebab}.repository.ts`), repositoryContent);
-		createFile(path.join(resourceDir, "models/interfaces", `${moduleNameKebab}-repository.interface.ts`), repositoryInterfaceContent);
+		await createFile(path.join(resourceDir, `${moduleNameKebab}.module.ts`), moduleContent);
+		await createFile(path.join(resourceDir, "repositories", `${moduleNameKebab}.repository.ts`), repositoryContent);
+		await createFile(path.join(resourceDir, "models/interfaces", `${moduleNameKebab}-repository.interface.ts`), repositoryInterfaceContent);
 
 		const modelDirs = ["dtos", "entities", "enums", "interfaces"];
 		modelDirs.forEach(dir => {
@@ -28,5 +28,26 @@ export class ModuleGenerator extends IGenerator {
 		});
 
 		fs.mkdirSync(path.join(resourceDir, "use-cases"), { recursive: true });
+		this.updateModuleFile(`${moduleName}Module`, moduleNameKebab, modulePath);
+	}
+
+	private static updateModuleFile(moduleName: string, moduleNameKebab: string, modulePath: string) {
+		console.log(moduleNameKebab);
+		const moduleFilePath = path.posix.join("modules", path.posix.join(modulePath), `${moduleNameKebab}.module`);
+		const appModulePath = path.join(process.cwd(), "src", "app.module.ts");
+		if (!fs.existsSync(appModulePath)) {
+			console.warn(`Module file ${appModulePath} not found. Skipping import.`);
+			process.exit(1);
+		}
+		let appModuleFileContent = fs.readFileSync(appModulePath, "utf8");
+
+		const importStatement = `
+import { ${moduleName} } from "./${moduleFilePath}";`;
+
+		if (!appModuleFileContent.includes(importStatement.trim())) {
+			appModuleFileContent = appModuleFileContent.replace(/(import {.* from .*;)/, `$1${importStatement}`);
+		}
+		appModuleFileContent = addToArray("imports", moduleName, appModuleFileContent);
+		fs.writeFileSync(appModulePath, appModuleFileContent, "utf8");
 	}
 }

@@ -13,9 +13,7 @@ export class RepositoryGenerator extends IGenerator {
 			process.exit(1);
 		}
 		const modulePath = createModulePath(resourcePath, moduleNameKebab);
-		const moduleNameCamel = kebabToCamel(moduleNameKebab);
 		const repositoryNameCamel = kebabToCamel(resourceNameKebab);
-		const moduleName = capitalize(moduleNameCamel);
 		const repositoryName = capitalize(repositoryNameCamel);
 		const resourceDir = path.join(process.cwd(), "./src/modules", modulePath);
 
@@ -23,8 +21,8 @@ export class RepositoryGenerator extends IGenerator {
 
 		const repositoryContent = repositoryElement(repositoryName, resourceNameKebab);
 
-		createFile(path.join(resourceDir, "repositories", `${resourceNameKebab}.repository.ts`), repositoryContent);
-		createFile(path.join(resourceDir, "models/interfaces", `${resourceNameKebab}-repository.interface.ts`), repositoryInterfaceContent);
+		await createFile(path.join(resourceDir, "repositories", `${resourceNameKebab}.repository.ts`), repositoryContent);
+		await createFile(path.join(resourceDir, "models/interfaces", `${resourceNameKebab}-repository.interface.ts`), repositoryInterfaceContent);
 
 		const updateModuleFile = (moduleFilePath: string, repositoryName: string, repositoryPath: string) => {
 			if (!fs.existsSync(moduleFilePath)) {

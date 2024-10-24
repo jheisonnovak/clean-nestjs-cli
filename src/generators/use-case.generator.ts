@@ -40,9 +40,9 @@ export class UseCaseGenerator extends IGenerator {
 			ModuleGenerator.generate(moduleNameKebab, resourcePath);
 		}
 
-		createFile(path.join(useCaseDir, `${resourceNameKebab}.use-case.ts`), useCaseContent);
-		createFile(path.join(useCaseDir, `${resourceNameKebab}.controller.ts`), controllerContent);
-		createFile(path.join(useCaseDir, `${resourceNameKebab}.spec.ts`), specContent);
+		await createFile(path.join(useCaseDir, `${resourceNameKebab}.use-case.ts`), useCaseContent);
+		await createFile(path.join(useCaseDir, `${resourceNameKebab}.controller.ts`), controllerContent);
+		await createFile(path.join(useCaseDir, `${resourceNameKebab}.spec.ts`), specContent);
 
 		this.updateModuleFile(
 			moduleFilePath,
