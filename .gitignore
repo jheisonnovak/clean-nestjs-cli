@@ -1,0 +1,6 @@
+/node_modules
+
+bin/*.js
+src/**/*.js
+bin/*.d.ts
+src/**/*.d.ts
