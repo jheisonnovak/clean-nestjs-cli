@@ -1,5 +1,5 @@
 {
-	"name": "clean-arch-nestjs-cli",
+	"name": "clean-nestjs-cli",
 	"version": "0.0.1",
 	"bin": {
 		"clean-nest": "./bin/index.js"
