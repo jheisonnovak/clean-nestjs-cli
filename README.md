@@ -1,8 +1,6 @@
-<a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/v/clean-nestjs-cli.svg" alt ="NPM Version">
-<a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/l/clean-nestjs-cli.svg" alt ="License">
-<a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/dm/clean-nestjs-cli.svg" alt ="Downloads">
+# Clean NestJS CLI <a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/v/clean-nestjs-cli.svg" alt ="NPM Version"></a> <a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/l/clean-nestjs-cli.svg" alt ="License"></a> <a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/dm/clean-nestjs-cli.svg" alt ="Downloads"></a>
 
-# Description
+## Description
 
 A command-line interface tool designed to streamline the creation and management of NestJS projects following Clean Architecture principles.
 
@@ -121,6 +119,14 @@ my-new-project/
 
 Contributions are welcome! Feel free to open issues and pull requests on the official repository.
 
+## Author
+
+**Jheison Novak**
+
+-   [GitHub Profile](https://github.com/JheisonNovak)
+-   [LinkedIn Profile](https://www.linkedin.com/in/jheison-novak)
+
 ## License
 
-This project is licensed under the [MIT License](./LICENSE).
+Copyright © 2024, [Jheison Novak](https://github.com/JheisonNovak).
+Released under the [MIT License](LICENSE).
