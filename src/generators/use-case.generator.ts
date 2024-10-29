@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { IGenerator } from "./generate.generator";
-import { addToArray, capitalize, createFile, decapitalize, kebabToCamel } from "../utils/file";
+import { addToArray, capitalize, createFile, decapitalize, kebabToCamel, startsInBasePath } from "../utils/file";
 import { useCaseElement } from "../elements/use-case.element";
 import { controllerElement } from "../elements/controller.element";
 import { specElement } from "../elements/spec.element";
@@ -16,6 +16,9 @@ export class UseCaseGenerator extends IGenerator {
 			process.exit(1);
 		}
 		const modulePath = createModulePath(resourcePath, moduleNameKebab);
+		const basePath = path.join(process.cwd(), "./src/modules");
+		const useCaseDir = path.join(basePath, modulePath, "use-cases", resourceNameKebab);
+		startsInBasePath(basePath, useCaseDir);
 
 		const moduleNameCamel = kebabToCamel(moduleNameKebab);
 		const useCaseNameCamel = kebabToCamel(resourceNameKebab);
@@ -23,7 +26,6 @@ export class UseCaseGenerator extends IGenerator {
 		const capitalizedUseCaseName = capitalize(useCaseNameCamel) + capitalizedModuleName;
 		const decapitalizedUseCaseName = decapitalize(useCaseNameCamel);
 
-		const useCaseDir = path.join(process.cwd(), "./src/modules", modulePath, "use-cases", resourceNameKebab);
 		const useCaseContent = useCaseElement(capitalizedUseCaseName);
 		const controllerContent = controllerElement(capitalizedUseCaseName, resourceNameKebab, modulePath, decapitalizedUseCaseName);
 		const specContent = specElement(

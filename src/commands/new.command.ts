@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { AppGenerator } from "../generators/app.generator";
+import { isValidName } from "../utils/file";
 
 export class NewCommand {
 	load(program: Command) {
@@ -8,7 +9,8 @@ export class NewCommand {
 			.alias("n")
 			.description("create a new clean project")
 			.option("--no-linters", "disable linters (default is enabled)")
-			.action((projectName, options) => {
+			.action((projectName: string, options) => {
+				isValidName(projectName);
 				AppGenerator.generate(projectName, options);
 			});
 	}
