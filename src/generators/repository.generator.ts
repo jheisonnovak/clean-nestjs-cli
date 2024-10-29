@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { IGenerator } from "./generate.generator";
-import { addToArray, capitalize, createFile, kebabToCamel } from "../utils/file";
+import { addToArray, capitalize, createFile, kebabToCamel, startsInBasePath } from "../utils/file";
 import { createModulePath } from "../utils/create-module-path";
 import { repositoryInterfaceElement } from "../elements/repository-interface.element";
 import { repositoryElement } from "../elements/repository.element";
@@ -17,7 +17,9 @@ export class RepositoryGenerator extends IGenerator {
 		const modulePath = createModulePath(resourcePath, moduleNameKebab);
 		const repositoryNameCamel = kebabToCamel(resourceNameKebab);
 		const repositoryName = capitalize(repositoryNameCamel);
-		const resourceDir = path.join(process.cwd(), "./src/modules", modulePath);
+		const basePath = path.join(process.cwd(), "./src/modules/");
+		const resourceDir = path.join(basePath, modulePath);
+		startsInBasePath(basePath, resourceDir);
 
 		const repositoryInterfaceContent = repositoryInterfaceElement(repositoryName);
 

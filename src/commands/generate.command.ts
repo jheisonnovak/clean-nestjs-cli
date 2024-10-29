@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { generators, getGenerator } from "../utils/get-generator";
+import { isValidName } from "../utils/file";
 
 export class GenerateCommand {
 	public async load(program: Command) {
@@ -14,8 +15,10 @@ export class GenerateCommand {
 					console.error(`"${element}" not found. Available schematics: [${Object.keys(generators).join(", ")}]`);
 					process.exit(1);
 				}
-				let moduleArray = module.split("/");
-				generator.generate(moduleArray[moduleArray.length - 1], options.path, resource);
+				isValidName(module);
+				isValidName(resource);
+				isValidName(options.path, /^[a-zA-Z0-9_.\-\/]+$/, "Invalid path name. Ex: my-module/my-resource");
+				generator.generate(module, options.path, resource);
 			});
 	}
 }

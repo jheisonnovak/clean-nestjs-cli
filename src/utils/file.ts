@@ -1,7 +1,12 @@
-import { writeFileSync, existsSync, mkdirSync } from "fs";
+import { existsSync, mkdirSync } from "fs";
 import path from "path";
 import { promises as fs } from "fs";
 export const createFile = async (filePath: string, content: string) => {
+	if (existsSync(filePath)) {
+		let fileArray = filePath.split("\\");
+		console.warn(`Directory ${fileArray[fileArray.length - 1]} already exists. Skipping creation.`);
+		return;
+	}
 	const dir = path.dirname(filePath);
 	try {
 		await fs.access(dir);
@@ -29,7 +34,7 @@ export const kebabToCamel = (str: string) => {
 	return str.replace(/-./g, match => match[1].toUpperCase());
 };
 
-export const addToArray = (arrayName: string, itemName: string, moduleFileContent: string) => {
+export const addToArray = (arrayName: "imports" | "controllers" | "providers" | "exports", itemName: string, moduleFileContent: string) => {
 	const regex = new RegExp(`(${arrayName}: \\[[^\\]]*)\\]`);
 	const match = moduleFileContent.match(regex);
 	if (match) {
@@ -56,4 +61,23 @@ export const addToArray = (arrayName: string, itemName: string, moduleFileConten
 		moduleFileContent = moduleFileContent.replace(/(@Module\(\{)/, `$1\n    ${arrayName}: [${itemName}],`);
 	}
 	return moduleFileContent;
+};
+
+export const isValidName = (
+	fileName: string,
+	pattern: RegExp = /^[a-z0-9.-]+$/,
+	message = "Invalid file name. Try using a kebab-case format. Ex: my-name"
+) => {
+	const isValid = pattern.test(fileName);
+	if (!isValid) {
+		console.error(message);
+		process.exit(1);
+	}
+};
+
+export const startsInBasePath = (basePath: string, resourcePath: string) => {
+	if (!resourcePath.startsWith(basePath)) {
+		console.error("The resource path must be inside the base path");
+		process.exit(1);
+	}
 };
