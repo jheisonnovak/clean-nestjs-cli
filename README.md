@@ -57,7 +57,7 @@ Creates a new project with a clean and structured setup.
 **Alias**: `n`
 
 ```bash
-clean-nest new my-new-project
+cnest new my-new-project
 ```
 
 **Options:**
@@ -67,7 +67,7 @@ clean-nest new my-new-project
     Example:
 
     ```bash
-    clean-nest new my-new-project --no-linters
+    cnest new my-new-project --no-linters
     ```
 
 #### `generate <schematics> <module> [resource] [options]`
@@ -77,8 +77,10 @@ Generates a new element in your project, such as modules or resources.
 **Alias**: `g`
 
 ```bash
-clean-nest generate module user
+cnest generate module user
 ```
+
+Available schematics: [module, use-case, repository]
 
 **Options:**
 
@@ -87,7 +89,7 @@ clean-nest generate module user
     Example:
 
     ```bash
-    clean-nest generate module user --path auth
+    cnest generate module user --path auth
     ```
 
 ## Folder Structure
@@ -109,7 +111,7 @@ my-new-project/
 │  │   │   │   ├── use-case-example-1/
 │  │   │   │   └── use-case-example-2/
 │  ├── app.module.ts
-│  └── main.ts
+│  ├── main.ts
 │  ├── shared/
 │  │   ├── config/
 └── ...
