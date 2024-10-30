@@ -12,6 +12,7 @@ import ora from "ora";
 import { executeCommand } from "../utils/execute-command";
 import { databaseConfigElement } from "../elements/database-config.element";
 import { DistinctQuestion } from "inquirer/dist/commonjs/types";
+import { existsSync, mkdirSync } from "fs";
 
 export class AppGenerator {
 	static async generate(projectNameKebab: string, options: { linters: boolean }): Promise<void> {
@@ -24,10 +25,11 @@ export class AppGenerator {
 			.prompt(questions)
 			.then(async answers => {
 				const { packageManager, orm } = answers;
+				this.createDir(projectDir);
 				const commands: string[] = [];
 				commands.push(`${packageManager} install`);
 				if (orm === "TypeORM") {
-					commands.push(`${packageManager} install @nestjs/typeorm typeorm @nestjs/config`);
+					commands.push(`${packageManager} ${packageManager === "yarn" ? "add" : "install"} @nestjs/typeorm typeorm @nestjs/config`);
 				}
 				const dependencies = ora("Installing dependencies...");
 				const generatingFiles = ora("Generating files...");
@@ -41,8 +43,8 @@ export class AppGenerator {
 						await executeCommand(command, projectDir);
 					}
 					dependencies.succeed("Dependencies installed");
-				} catch {
-					dependencies.fail("Error installing dependencies, check your package manager");
+				} catch (e) {
+					dependencies.fail("Error installing dependencies, check your package manager. " + e);
 				}
 			})
 			.catch(() => console.log("Console has been closed"));
@@ -89,5 +91,11 @@ export class AppGenerator {
 			},
 		];
 		return questions;
+	}
+
+	private static createDir(dir: string) {
+		if (!existsSync(dir)) {
+			mkdirSync(dir, { recursive: true });
+		}
 	}
 }
