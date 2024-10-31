@@ -13,6 +13,7 @@ import { executeCommand } from "../utils/execute-command";
 import { databaseConfigElement } from "../elements/database-config.element";
 import { DistinctQuestion } from "inquirer/dist/commonjs/types";
 import { existsSync, mkdirSync } from "fs";
+import { readmeElement } from "../elements/readme.element";
 
 export class AppGenerator {
 	static async generate(projectNameKebab: string, options: { linters: boolean }): Promise<void> {
@@ -27,16 +28,21 @@ export class AppGenerator {
 				const { packageManager, orm } = answers;
 				this.createDir(projectDir);
 				const commands: string[] = [];
-				commands.push(`${packageManager} install`);
+				commands.push(
+					`${packageManager} ${packageManager === "npm" ? "install" : "add"} clean-nestjs-cli ${
+						packageManager === "yarn" ? "--dev" : "--save-dev"
+					}`
+				);
 				if (orm === "TypeORM") {
-					commands.push(`${packageManager} ${packageManager === "yarn" ? "add" : "install"} @nestjs/typeorm typeorm @nestjs/config`);
+					commands.push(`${packageManager} ${packageManager === "npm" ? "install" : "add"} @nestjs/typeorm typeorm @nestjs/config`);
 				}
+				commands.push(`${packageManager} install`);
 				const dependencies = ora("Installing dependencies...");
 				const generatingFiles = ora("Generating files...");
 				try {
 					await executeCommand(`${packageManager} --version`, projectDir);
 					generatingFiles.start();
-					await this.generateFiles(projectName, projectDir, options.linters, orm);
+					await this.generateFiles(projectName, projectDir, options.linters, orm, packageManager);
 					generatingFiles.succeed("Files generated");
 					dependencies.start();
 					for (const command of commands) {
@@ -50,18 +56,20 @@ export class AppGenerator {
 			.catch(() => console.log("Console has been closed"));
 	}
 
-	private static async generateFiles(projectName: string, projectDir: string, linters: boolean, orm: string) {
+	private static async generateFiles(projectName: string, projectDir: string, linters: boolean, orm: string, packageManager: string) {
 		const tsConfigContent = tsconfigElement();
 		const packageContent = packageElement(projectName, linters);
 		const appModuleContent = appModuleElement();
 		const mainContent = mainElement();
 		const gitIgnoreContent = gitIgnoreElement();
+		const readmeContent = readmeElement(packageManager);
 		if (linters) {
 			const prettierrcContent = prettierrcElement();
 			const eslintrcContent = eslintrcElement();
 			await createFile(path.join(projectDir, ".prettierrc"), prettierrcContent);
 			await createFile(path.join(projectDir, ".eslintrc.js"), eslintrcContent);
 		}
+		await createFile(path.join(projectDir, "README.md"), readmeContent);
 		await createFile(path.join(projectDir, "tsconfig.json"), tsConfigContent);
 		await createFile(path.join(projectDir, "package.json"), packageContent);
 		await createFile(path.join(projectDir, "src", "app.module.ts"), appModuleContent);

@@ -1,8 +1,11 @@
-# Clean NestJS CLI <a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/v/clean-nestjs-cli.svg" alt ="NPM Version"></a> <a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/l/clean-nestjs-cli.svg" alt ="License"></a> <a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/dm/clean-nestjs-cli.svg" alt ="Downloads"></a>
+<p align="center">
+    <a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/v/clean-nestjs-cli.svg" alt ="NPM Version"></a> <a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/l/clean-nestjs-cli.svg" alt ="License"></a> <a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/d18m/clean-nestjs-cli.svg" alt ="Downloads"></a>
+</p>
+<h1 align="center">Clean NestJS CLI</h1>
 
 ## Description
 
-A command-line interface tool designed to streamline the creation and management of NestJS projects following Clean Architecture principles.
+A command-line interface tool designed to streamline the creation and management of [Nest](https://github.com/nestjs/nest) projects following Clean Architecture principles.
 
 ## Installation
 
@@ -94,7 +97,7 @@ Available schematics: [module, use-case, repository]
 
 ## Folder Structure
 
-When using the `new` command, a NestJS project with the following clean structure will be created:
+When using the `new` command, a [Nest](https://github.com/nestjs/nest) project with the following clean structure will be created:
 
 ```
 my-new-project/
