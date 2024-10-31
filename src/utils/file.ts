@@ -1,10 +1,11 @@
 import { existsSync, mkdirSync } from "fs";
 import path from "path";
 import { promises as fs } from "fs";
+import chalk from "chalk";
 export const createFile = async (filePath: string, content: string) => {
+	const relativePath = path.relative(process.cwd(), filePath);
 	if (existsSync(filePath)) {
-		let fileArray = filePath.split("\\");
-		console.warn(`Directory ${fileArray[fileArray.length - 1]} already exists. Skipping creation.`);
+		console.warn(`${chalk.yellow("ALREADY EXISTS")} ${relativePath}`);
 		return;
 	}
 	const dir = path.dirname(filePath);
@@ -15,6 +16,7 @@ export const createFile = async (filePath: string, content: string) => {
 	}
 	try {
 		await fs.writeFile(filePath, content, "utf8");
+		console.log(`${chalk.green("CREATE")} ${relativePath}`);
 	} catch (error) {
 		throw error;
 	}

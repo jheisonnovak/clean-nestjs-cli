@@ -41,7 +41,6 @@ export class AppGenerator {
 				const generatingFiles = ora("Generating files...");
 				try {
 					await executeCommand(`${packageManager} --version`, projectDir);
-					generatingFiles.start();
 					await this.generateFiles(projectName, projectDir, options.linters, orm, packageManager);
 					generatingFiles.succeed("Files generated");
 					dependencies.start();
