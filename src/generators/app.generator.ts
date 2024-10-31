@@ -14,6 +14,8 @@ import { databaseConfigElement } from "../elements/database-config.element";
 import { DistinctQuestion } from "inquirer/dist/commonjs/types";
 import { existsSync, mkdirSync } from "fs";
 import { readmeElement } from "../elements/readme.element";
+import { appE2eSpecElement } from "../elements/app-e2e-spec.element";
+import { jestE2eElement } from "../elements/jest-e2e.element";
 
 export class AppGenerator {
 	static async generate(projectNameKebab: string, options: { linters: boolean }): Promise<void> {
@@ -62,6 +64,8 @@ export class AppGenerator {
 		const mainContent = mainElement();
 		const gitIgnoreContent = gitIgnoreElement();
 		const readmeContent = readmeElement(packageManager);
+		const appE2eSpecContent = appE2eSpecElement();
+		const jestE2eContent = jestE2eElement();
 		if (linters) {
 			const prettierrcContent = prettierrcElement();
 			const eslintrcContent = eslintrcElement();
@@ -74,6 +78,8 @@ export class AppGenerator {
 		await createFile(path.join(projectDir, "src", "app.module.ts"), appModuleContent);
 		await createFile(path.join(projectDir, "src", "main.ts"), mainContent);
 		await createFile(path.join(projectDir, ".gitignore"), gitIgnoreContent);
+		await createFile(path.join(projectDir, "test", "app.e2e-spec.ts"), appE2eSpecContent);
+		await createFile(path.join(projectDir, "test", "jest-e2e.json"), jestE2eContent);
 		if (orm === "TypeORM") {
 			const databaseConfigContent = databaseConfigElement();
 			await createFile(path.join(projectDir, "src", "shared", "config", "database.config.service.ts"), databaseConfigContent);
