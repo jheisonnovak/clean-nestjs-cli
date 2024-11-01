@@ -1,12 +1,12 @@
 import * as fs from "fs";
 import * as path from "path";
-import { IGenerator } from "./generate.generator";
-import { capitalize, createFile, kebabToCamel, startsInBasePath } from "../utils/file";
-import { createModulePath } from "../utils/create-module-path";
 import { repositoryInterfaceElement } from "../elements/repository-interface.element";
 import { repositoryElement } from "../elements/repository.element";
-import { ModuleGenerator } from "./module.generator";
+import { createModulePath } from "../utils/create-module-path";
+import { capitalize, createFile, formatFile, kebabToCamel, startsInBasePath } from "../utils/file";
 import { updateModuleFile } from "../utils/update-module-file";
+import { IGenerator } from "./generate.generator";
+import { ModuleGenerator } from "./module.generator";
 
 export class RepositoryGenerator extends IGenerator {
 	static override async generate(moduleNameKebab: string, resourcePath: string = "", resourceNameKebab?: string): Promise<void> {
@@ -36,20 +36,26 @@ export class RepositoryGenerator extends IGenerator {
 		const repository = `${repositoryName}TypeOrmRepository`;
 		const repositoryInterface = `"I${repositoryName}Repository"`;
 		const repositoryProvider = `{
-		    provide: ${repositoryInterface},
-		    useExisting: ${repository}
+			provide: ${repositoryInterface},
+			useExisting: ${repository},
 		}`;
 		const repositoryPath = `./repositories/${resourceNameKebab}.repository`;
 
 		updateModuleFile(moduleFilePath, {
 			arrayName: ["providers"],
-			content: repositoryProvider,
+			content: repository,
 			imports: [{ name: repository, path: repositoryPath }],
+		});
+		updateModuleFile(moduleFilePath, {
+			arrayName: ["providers"],
+			content: repositoryProvider,
+			imports: [],
 		});
 		updateModuleFile(moduleFilePath, {
 			arrayName: ["exports"],
 			content: repositoryInterface,
 			imports: [],
 		});
+		await formatFile(moduleFilePath);
 	}
 }
