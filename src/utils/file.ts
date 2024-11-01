@@ -51,8 +51,8 @@ export const addToArray = (arrayName: "imports" | "controllers" | "providers" | 
 				arrayContent = arrayContent.endsWith(",")
 					? `${arrayContent} ${itemName}`
 					: arrayContent.endsWith("[")
-					? `${arrayContent}${itemName}`
-					: `${arrayContent}, ${itemName}`;
+						? `${arrayContent}${itemName}`
+						: `${arrayContent}, ${itemName}`;
 				moduleFileContent = moduleFileContent.replace(regex, `${arrayContent}]`);
 			} else {
 				arrayContent = arrayContent.endsWith(",") ? `${arrayContent}${indent}${itemName},\n	` : `${arrayContent},${indent}${itemName},`;
