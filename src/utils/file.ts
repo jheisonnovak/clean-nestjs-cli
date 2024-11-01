@@ -1,7 +1,6 @@
-import { existsSync, mkdirSync } from "fs";
-import path from "path";
-import { promises as fs } from "fs";
 import chalk from "chalk";
+import { existsSync, promises as fs, mkdirSync } from "fs";
+import path from "path";
 export const createFile = async (filePath: string, content: string) => {
 	const relativePath = path.relative(process.cwd(), filePath);
 	if (existsSync(filePath)) {

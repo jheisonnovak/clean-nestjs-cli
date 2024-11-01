@@ -6,6 +6,7 @@ import { repositoryInterfaceElement } from "../elements/repository-interface.ele
 import { repositoryElement } from "../elements/repository.element";
 import { IGenerator } from "./generate.generator";
 import { createModulePath } from "../utils/create-module-path";
+import { updateModuleFile } from "../utils/update-module-file";
 
 export class ModuleGenerator extends IGenerator {
 	static override async generate(moduleNameKebab: string, resourcePath: string = "") {
@@ -30,25 +31,14 @@ export class ModuleGenerator extends IGenerator {
 		});
 
 		fs.mkdirSync(path.join(resourceDir, "use-cases"), { recursive: true });
-		this.updateModuleFile(`${moduleName}Module`, moduleNameKebab, modulePath);
-	}
 
-	private static updateModuleFile(moduleName: string, moduleNameKebab: string, modulePath: string) {
-		const moduleFilePath = path.posix.join("modules", path.posix.join(modulePath), `${moduleNameKebab}.module`);
-		const appModulePath = path.join(process.cwd(), "src", "app.module.ts");
-		if (!fs.existsSync(appModulePath)) {
-			console.warn(`Module file ${appModulePath} not found. Skipping import.`);
-			process.exit(1);
-		}
-		let appModuleFileContent = fs.readFileSync(appModulePath, "utf8");
-
-		const importStatement = `
-import { ${moduleName} } from "./${moduleFilePath}";`;
-
-		if (!appModuleFileContent.includes(importStatement.trim())) {
-			appModuleFileContent = appModuleFileContent.replace(/(import {.* from .*;)/, `$1${importStatement}`);
-		}
-		appModuleFileContent = addToArray("imports", moduleName, appModuleFileContent);
-		fs.writeFileSync(appModulePath, appModuleFileContent, "utf8");
+		const appModuleFilePath = path.posix.join(process.cwd(), "src", "app.module.ts");
+		const moduleClassName = `${moduleName}Module`;
+		const moduleClassPath = "./" + path.posix.join("modules", modulePath, `${moduleNameKebab}.module`);
+		updateModuleFile(appModuleFilePath, {
+			arrayName: ["imports"],
+			content: moduleClassName,
+			imports: [{ name: moduleClassName, path: moduleClassPath }],
+		});
 	}
 }

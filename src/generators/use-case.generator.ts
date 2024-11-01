@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { IGenerator } from "./generate.generator";
-import { addToArray, capitalize, createFile, decapitalize, kebabToCamel, startsInBasePath } from "../utils/file";
+import { capitalize, createFile, decapitalize, kebabToCamel, startsInBasePath } from "../utils/file";
 import { useCaseElement } from "../elements/use-case.element";
 import { controllerElement } from "../elements/controller.element";
 import { specElement } from "../elements/spec.element";

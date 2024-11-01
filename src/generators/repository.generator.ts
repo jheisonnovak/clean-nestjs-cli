@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { IGenerator } from "./generate.generator";
-import { addToArray, capitalize, createFile, kebabToCamel, startsInBasePath } from "../utils/file";
+import { capitalize, createFile, kebabToCamel, startsInBasePath } from "../utils/file";
 import { createModulePath } from "../utils/create-module-path";
 import { repositoryInterfaceElement } from "../elements/repository-interface.element";
 import { repositoryElement } from "../elements/repository.element";
