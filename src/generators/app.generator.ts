@@ -1,21 +1,22 @@
-import * as path from "path";
-import { tsconfigElement } from "../elements/tsconfig.element";
-import { packageElement } from "../elements/package.element";
-import { appModuleElement } from "../elements/app-module.element";
-import { mainElement } from "../elements/main.element";
-import { gitIgnoreElement } from "../elements/gitignore.element";
-import { createFile } from "../utils/file";
-import { prettierrcElement } from "../elements/prettierrc.element";
-import { eslintrcElement } from "../elements/eslintrc.element";
-import inquirer from "inquirer";
-import ora from "ora";
-import { executeCommand } from "../utils/execute-command";
-import { databaseConfigElement } from "../elements/database-config.element";
-import { DistinctQuestion } from "inquirer/dist/commonjs/types";
 import { existsSync, mkdirSync } from "fs";
-import { readmeElement } from "../elements/readme.element";
+import inquirer from "inquirer";
+import { DistinctQuestion } from "inquirer/dist/commonjs/types";
+import ora from "ora";
+import * as path from "path";
 import { appE2eSpecElement } from "../elements/app-e2e-spec.element";
+import { appModuleElement } from "../elements/app-module.element";
+import { databaseConfigElement } from "../elements/database-config.element";
+import { eslintrcElement } from "../elements/eslintrc.element";
+import { gitIgnoreElement } from "../elements/gitignore.element";
 import { jestE2eElement } from "../elements/jest-e2e.element";
+import { mainElement } from "../elements/main.element";
+import { packageElement } from "../elements/package.element";
+import { prettierrcElement } from "../elements/prettierrc.element";
+import { readmeElement } from "../elements/readme.element";
+import { tsconfigBuildElement } from "../elements/tsconfig-build.element";
+import { tsconfigElement } from "../elements/tsconfig.element";
+import { executeCommand } from "../utils/execute-command";
+import { createFile } from "../utils/file";
 
 export class AppGenerator {
 	static async generate(projectNameKebab: string, options: { linters: boolean }): Promise<void> {
@@ -59,6 +60,7 @@ export class AppGenerator {
 
 	private static async generateFiles(projectName: string, projectDir: string, linters: boolean, orm: string, packageManager: string) {
 		const tsConfigContent = tsconfigElement();
+		const tsConfigBuildContent = tsconfigBuildElement();
 		const packageContent = packageElement(projectName, linters);
 		const appModuleContent = appModuleElement();
 		const mainContent = mainElement();
@@ -74,6 +76,7 @@ export class AppGenerator {
 		}
 		await createFile(path.join(projectDir, "README.md"), readmeContent);
 		await createFile(path.join(projectDir, "tsconfig.json"), tsConfigContent);
+		await createFile(path.join(projectDir, "tsconfig.build.json"), tsConfigBuildContent);
 		await createFile(path.join(projectDir, "package.json"), packageContent);
 		await createFile(path.join(projectDir, "src", "app.module.ts"), appModuleContent);
 		await createFile(path.join(projectDir, "src", "main.ts"), mainContent);

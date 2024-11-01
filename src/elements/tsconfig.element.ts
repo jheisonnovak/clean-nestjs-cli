@@ -17,7 +17,6 @@ export const tsconfigElement = (): string => `{
 		"strictBindCallApply": false,
 		"forceConsistentCasingInFileNames": false,
 		"noFallthroughCasesInSwitch": false
-	},
-	"exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+	}
 }
 `;
