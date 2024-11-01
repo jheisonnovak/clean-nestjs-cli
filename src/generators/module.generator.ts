@@ -1,12 +1,12 @@
 import * as fs from "fs";
 import * as path from "path";
-import { addToArray, capitalize, createFile, kebabToCamel, startsInBasePath } from "../utils/file";
 import { moduleElement } from "../elements/module.element";
 import { repositoryInterfaceElement } from "../elements/repository-interface.element";
 import { repositoryElement } from "../elements/repository.element";
-import { IGenerator } from "./generate.generator";
 import { createModulePath } from "../utils/create-module-path";
+import { capitalize, createFile, formatFile, kebabToCamel, startsInBasePath } from "../utils/file";
 import { updateModuleFile } from "../utils/update-module-file";
+import { IGenerator } from "./generate.generator";
 
 export class ModuleGenerator extends IGenerator {
 	static override async generate(moduleNameKebab: string, resourcePath: string = "") {
@@ -40,5 +40,6 @@ export class ModuleGenerator extends IGenerator {
 			content: moduleClassName,
 			imports: [{ name: moduleClassName, path: moduleClassPath }],
 		});
+		await formatFile(appModuleFilePath);
 	}
 }

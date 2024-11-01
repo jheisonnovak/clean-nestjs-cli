@@ -1,13 +1,13 @@
 import * as fs from "fs";
 import * as path from "path";
-import { IGenerator } from "./generate.generator";
-import { capitalize, createFile, decapitalize, kebabToCamel, startsInBasePath } from "../utils/file";
-import { useCaseElement } from "../elements/use-case.element";
 import { controllerElement } from "../elements/controller.element";
 import { specElement } from "../elements/spec.element";
-import { ModuleGenerator } from "./module.generator";
+import { useCaseElement } from "../elements/use-case.element";
 import { createModulePath } from "../utils/create-module-path";
+import { capitalize, createFile, decapitalize, formatFile, kebabToCamel, startsInBasePath } from "../utils/file";
 import { updateModuleFile } from "../utils/update-module-file";
+import { IGenerator } from "./generate.generator";
+import { ModuleGenerator } from "./module.generator";
 
 export class UseCaseGenerator extends IGenerator {
 	static override async generate(moduleNameKebab: string, resourcePath: string = "", resourceNameKebab?: string): Promise<void> {
@@ -61,5 +61,6 @@ export class UseCaseGenerator extends IGenerator {
 			content: useCaseName,
 			imports: [{ name: useCaseName, path: useCasePath }],
 		});
+		await formatFile(moduleFilePath);
 	}
 }
