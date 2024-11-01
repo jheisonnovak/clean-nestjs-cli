@@ -1,6 +1,6 @@
 import { Command } from "commander";
-import { generators, getGenerator } from "../utils/get-generator";
 import { isValidName } from "../utils/file";
+import { generators, getGenerator } from "../utils/get-generator";
 
 export class GenerateCommand {
 	public async load(program: Command) {

@@ -12,7 +12,7 @@ import { I${capitalizedModuleName}Repository } from "../../models/interfaces/${m
 describe("${capitalizedUseCaseName}", () => {
 	let ${decapitalizedUseCaseName}UseCase: ${capitalizedUseCaseName}UseCase;
 	let ${moduleNameCamel}Repository: I${capitalizedModuleName}Repository;
-	let mockRepository = {};
+	const mockRepository = {};
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -25,11 +25,11 @@ describe("${capitalizedUseCaseName}", () => {
 
 	it("should be defined", () => {
 		expect(${decapitalizedUseCaseName}UseCase).toBeDefined();
-		expect(mockRepository).toBeDefined();
+		expect(${moduleNameCamel}Repository).toBeDefined();
 	});
 
 	describe("${capitalizedUseCaseName}UseCase", () => {
-
+		// add test cases
 	});
 });
 `;

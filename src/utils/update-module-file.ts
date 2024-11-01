@@ -1,7 +1,7 @@
-import { existsSync, readFileSync, writeFileSync } from "fs";
-import { addToArray } from "./file";
-import path from "path";
 import chalk from "chalk";
+import { existsSync, readFileSync, writeFileSync } from "fs";
+import path from "path";
+import { addToArray } from "./file";
 
 export function updateModuleFile(moduleFilePath: string, fileModuleUpdate: IFileModuleUpdate) {
 	if (!existsSync(moduleFilePath)) {
