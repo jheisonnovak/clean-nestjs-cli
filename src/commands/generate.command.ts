@@ -1,18 +1,18 @@
 import { Command } from "commander";
 import { isValidName } from "../utils/file";
-import { generators, getGenerator } from "../utils/get-generator";
+import { getGenerator, getNameAliasPairs } from "../utils/get-generator";
 
 export class GenerateCommand {
 	public async load(program: Command) {
 		program
 			.command("generate <schematics> <module> [resource]")
 			.alias("g")
-			.description("generate a specified element")
+			.description(`generate a specified element. Available schematics: [${getNameAliasPairs()}]`)
 			.option("--path <path>", "specify the destination directory inside /src/modules folder", "/")
 			.action((element, module: string, resource: string, options) => {
 				const generator = getGenerator(element);
 				if (!generator) {
-					console.error(`"${element}" not found. Available schematics: [${Object.keys(generators).join(", ")}]`);
+					console.error(`"${element}" not found. Available schematics: [${getNameAliasPairs()}]`);
 					process.exit(1);
 				}
 				isValidName(module);

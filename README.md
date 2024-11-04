@@ -83,7 +83,7 @@ Generates a new element in your project, such as modules or resources.
 cnest generate module user
 ```
 
-Available schematics: [module, use-case, repository]
+Available schematics: **[module|mo, repository|rp, use-case|uc]**
 
 **Options:**
 
