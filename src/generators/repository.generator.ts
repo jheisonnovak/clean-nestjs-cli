@@ -5,15 +5,16 @@ import { repositoryElement } from "../elements/repository.element";
 import { createModulePath } from "../utils/create-module-path";
 import { capitalize, createFile, formatFile, kebabToCamel, startsInBasePath } from "../utils/file";
 import { updateModuleFile } from "../utils/update-module-file";
-import { IGenerator } from "./generate.generator";
+import { IGenerator, IGeneratorOptions } from "./generate.generator";
 import { ModuleGenerator } from "./module.generator";
 
 export class RepositoryGenerator extends IGenerator {
-	static override async generate(moduleNameKebab: string, resourcePath: string = "", resourceNameKebab?: string): Promise<void> {
+	static override async generate(moduleNameKebab: string, options: IGeneratorOptions, resourceNameKebab?: string): Promise<void> {
 		if (!resourceNameKebab) {
 			console.error("Please provide the repository name.");
 			process.exit(1);
 		}
+		const resourcePath = options.path;
 		const modulePath = createModulePath(resourcePath, moduleNameKebab);
 		const repositoryNameCamel = kebabToCamel(resourceNameKebab);
 		const repositoryName = capitalize(repositoryNameCamel);
@@ -27,7 +28,7 @@ export class RepositoryGenerator extends IGenerator {
 
 		const moduleFilePath = path.join(process.cwd(), "./src/modules", modulePath, `${moduleNameKebab}.module.ts`);
 		if (!fs.existsSync(moduleFilePath)) {
-			ModuleGenerator.generate(moduleNameKebab, resourcePath);
+			ModuleGenerator.generate(moduleNameKebab, options);
 		}
 
 		await createFile(path.join(resourceDir, "repositories", `${resourceNameKebab}.repository.ts`), repositoryContent);

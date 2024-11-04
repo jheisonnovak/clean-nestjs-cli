@@ -6,12 +6,13 @@ import { repositoryElement } from "../elements/repository.element";
 import { createModulePath } from "../utils/create-module-path";
 import { capitalize, createFile, formatFile, kebabToCamel, startsInBasePath } from "../utils/file";
 import { updateModuleFile } from "../utils/update-module-file";
-import { IGenerator } from "./generate.generator";
+import { IGenerator, IGeneratorOptions } from "./generate.generator";
 
 export class ModuleGenerator extends IGenerator {
-	static override async generate(moduleNameKebab: string, resourcePath: string = "") {
+	static override async generate(moduleNameKebab: string, options: IGeneratorOptions) {
 		const resourceNameCamel = kebabToCamel(moduleNameKebab);
 		const moduleName = capitalize(resourceNameCamel);
+		const resourcePath = options.path;
 		const modulePath = createModulePath(resourcePath, moduleNameKebab);
 		const basePath = path.join(process.cwd(), "./src/modules/");
 		const resourceDir = path.join(basePath, modulePath);
