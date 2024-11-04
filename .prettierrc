@@ -1,4 +1,4 @@
-export const prettierrcElement = (): string => `{
+{
 	"printWidth": 150,
 	"arrowParens": "avoid",
 	"formatOnSave": true,
@@ -8,4 +8,3 @@ export const prettierrcElement = (): string => `{
 	"endOfLine": "auto",
 	"tabWidth": 4
 }
-`;

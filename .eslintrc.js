@@ -1,4 +1,4 @@
-export const eslintrcElement = (): string => `module.exports = {
+module.exports = {
 	parser: "@typescript-eslint/parser",
 	parserOptions: {
 		project: "tsconfig.json",
@@ -21,6 +21,6 @@ export const eslintrcElement = (): string => `module.exports = {
 		"@typescript-eslint/no-explicit-any": "off",
 		"@typescript-eslint/no-unused-vars": ["warn", { vars: "all", args: "after-used", ignoreRestSiblings: true }],
 		"@typescript-eslint/no-empty-object-type": ["warn"],
+		"@typescript-eslint/no-require-imports": ["warn"],
 	},
 };
-`;

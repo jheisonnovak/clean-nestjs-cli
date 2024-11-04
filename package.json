@@ -1,6 +1,6 @@
 {
 	"name": "clean-nestjs-cli",
-	"version": "1.0.3",
+	"version": "1.1.0",
 	"bin": {
 		"clean-nest": "./bin/index.js",
 		"cnest": "./bin/index.js"
@@ -24,6 +24,7 @@
 	},
 	"homepage": "https://github.com/JheisonNovak/clean-nestjs-cli#readme",
 	"dependencies": {
+		"chalk": "^4.1.2",
 		"commander": "^12.1.0",
 		"inquirer": "^12.0.0",
 		"ora": "^5.4.1"
@@ -32,6 +33,12 @@
 		"@types/node": "^22.7.7",
 		"commander": "^12.1.0",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.6.3"
+		"typescript": "^5.6.3",
+		"@typescript-eslint/eslint-plugin": "^8.0.0",
+		"@typescript-eslint/parser": "^8.0.0",
+		"eslint": "^8.42.0",
+		"eslint-config-prettier": "^9.0.0",
+		"eslint-plugin-prettier": "^5.0.0",
+		"prettier": "^3.0.0"
 	}
 }

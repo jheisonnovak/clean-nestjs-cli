@@ -12,5 +12,4 @@ import { ${moduleName}TypeOrmRepository } from "./repositories/${resourceNameKeb
 	exports: ["I${moduleName}Repository"],
 })
 export class ${moduleName}Module {}
-
 `;

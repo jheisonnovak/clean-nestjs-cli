@@ -1,9 +1,12 @@
+import chalk from "chalk";
 import { existsSync, readFileSync, writeFileSync } from "fs";
+import path from "path";
 import { addToArray } from "./file";
 
 export function updateModuleFile(moduleFilePath: string, fileModuleUpdate: IFileModuleUpdate) {
 	if (!existsSync(moduleFilePath)) {
-		console.warn(`Module file ${moduleFilePath} not found. Skipping import.`);
+		const relativePath = path.relative(process.cwd(), moduleFilePath);
+		console.warn(`${chalk.red("NOT FOUND")} ${relativePath}`);
 		process.exit(1);
 	}
 	let moduleFileContent = readFileSync(moduleFilePath, "utf8");
