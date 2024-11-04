@@ -95,6 +95,14 @@ Available schematics: **[module|mo, repository|rp, use-case|uc]**
     cnest generate module user --path auth
     ```
 
+-   `--no-spec`: Do not generate a spec files
+
+    Example:
+
+    ```bash
+    cnest generate use-case user find-all --no-spec
+    ```
+
 ## Folder Structure
 
 When using the `new` command, a [Nest](https://github.com/nestjs/nest) project with the following clean structure will be created:
@@ -116,7 +124,7 @@ my-new-project/
 │  ├── app.module.ts
 │  ├── main.ts
 │  ├── shared/
-│  │   ├── config/
+│  │   ├── databases/
 └── ...
 ```
 
