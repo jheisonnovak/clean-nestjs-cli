@@ -52,7 +52,7 @@ export class AppGenerator {
 					}
 					dependencies.succeed("Dependencies installed");
 				} catch (e) {
-					dependencies.fail("Error installing dependencies, check your package manager. " + e);
+					dependencies.fail("Error installing dependencies. " + e);
 				}
 			})
 			.catch(() => console.log("Console has been closed"));
@@ -85,7 +85,7 @@ export class AppGenerator {
 		await createFile(path.join(projectDir, "test", "jest-e2e.json"), jestE2eContent);
 		if (orm === "TypeORM") {
 			const databaseConfigContent = databaseConfigElement();
-			await createFile(path.join(projectDir, "src", "shared", "config", "database.config.service.ts"), databaseConfigContent);
+			await createFile(path.join(projectDir, "src", "shared", "databases", "database.config.service.ts"), databaseConfigContent);
 		}
 	}
 

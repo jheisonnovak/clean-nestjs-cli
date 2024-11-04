@@ -15,7 +15,6 @@ export class UseCaseGenerator extends IGenerator {
 			console.error("Please provide the use case name.");
 			process.exit(1);
 		}
-		console.log(options);
 		const resourcePath = options.path;
 		const modulePath = createModulePath(resourcePath, moduleNameKebab);
 		const basePath = path.join(process.cwd(), "./src/modules");

@@ -30,12 +30,12 @@ export const packageElement = (projectName: string, linters: boolean) => `{
 		"@nestjs/testing": "^10.0.0",
 		"@types/express": "^4.17.17",
 		"@types/jest": "^29.5.2",
-		"@types/node": "^20.3.1",
+		"@types/node": "^22.8.7",
 		"@types/supertest": "^6.0.0",${linters ? `\n		"@typescript-eslint/eslint-plugin": "^8.0.0",` : ""}${
-	linters ? `\n		"@typescript-eslint/parser": "^8.0.0",` : ""
-}${linters ? `\n		"eslint": "^8.42.0",` : ""}${linters ? `\n		"eslint-config-prettier": "^9.0.0",` : ""}${
-	linters ? `\n		"eslint-plugin-prettier": "^5.0.0",` : ""
-}
+			linters ? `\n		"@typescript-eslint/parser": "^8.0.0",` : ""
+		}${linters ? `\n		"eslint": "^8.42.0",` : ""}${linters ? `\n		"eslint-config-prettier": "^9.0.0",` : ""}${
+			linters ? `\n		"eslint-plugin-prettier": "^5.0.0",` : ""
+		}
 		"jest": "^29.5.0",${linters ? `\n		"prettier": "^3.0.0",` : ""}
 		"source-map-support": "^0.5.21",
 		"supertest": "^7.0.0",
