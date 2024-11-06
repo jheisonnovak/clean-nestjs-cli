@@ -136,10 +136,10 @@ Contributions are welcome! Feel free to open issues and pull requests on the off
 
 **Jheison Novak**
 
--   [GitHub Profile](https://github.com/JheisonNovak)
+-   [GitHub Profile](https://github.com/jheisonnovak)
 -   [LinkedIn Profile](https://www.linkedin.com/in/jheison-novak)
 
 ## License
 
-Copyright © 2024, [Jheison Novak](https://github.com/JheisonNovak).
+Copyright © 2024, [Jheison Novak](https://github.com/jheisonnovak).
 Released under the [MIT License](LICENSE).
