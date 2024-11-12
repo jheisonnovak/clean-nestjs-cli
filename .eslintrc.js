@@ -22,5 +22,6 @@ module.exports = {
 		"@typescript-eslint/no-unused-vars": ["warn", { vars: "all", args: "after-used", ignoreRestSiblings: true }],
 		"@typescript-eslint/no-empty-object-type": ["warn"],
 		"@typescript-eslint/no-require-imports": ["warn"],
+		"@typescript-eslint/no-unused-expressions": "off",
 	},
 };
