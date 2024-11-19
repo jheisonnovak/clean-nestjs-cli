@@ -1,5 +1,5 @@
 export const prettierrcElement = (): string => `{
-	"printWidth": 150,
+	"printWidth": 160,
 	"arrowParens": "avoid",
 	"formatOnSave": true,
 	"singleQuote": false,

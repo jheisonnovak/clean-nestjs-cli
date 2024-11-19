@@ -36,11 +36,13 @@ export class ModuleGenerator extends IGenerator {
 		const appModuleFilePath = path.posix.join(process.cwd(), "src", "app.module.ts");
 		const moduleClassName = `${moduleName}Module`;
 		const moduleClassPath = "./" + path.posix.join("modules", modulePath, `${moduleNameKebab}.module`);
-		updateModuleFile(appModuleFilePath, {
-			arrayName: ["imports"],
-			content: moduleClassName,
-			imports: [{ name: moduleClassName, path: moduleClassPath }],
-		});
+		updateModuleFile(appModuleFilePath, [
+			{
+				arrayName: ["imports"],
+				content: moduleClassName,
+				imports: [{ name: moduleClassName, path: moduleClassPath }],
+			},
+		]);
 		await formatFile(appModuleFilePath);
 	}
 }
