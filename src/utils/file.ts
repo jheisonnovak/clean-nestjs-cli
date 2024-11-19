@@ -88,6 +88,10 @@ export const startsInBasePath = (basePath: string, resourcePath: string) => {
 export const formatFile = async (path: string) => {
 	const prettierrc = join(process.cwd() + "/.prettierrc");
 	if (existsSync(prettierrc)) {
-		await executeCommand(`npx prettier --write ${path}`, process.cwd());
+		try {
+			await executeCommand(`npx prettier --write ${path}`, process.cwd());
+		} catch {
+			return;
+		}
 	}
 };
