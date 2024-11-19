@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { existsSync, promises as fs, mkdirSync } from "fs";
 import path, { join } from "path";
 import { executeCommand } from "./execute-command";
+
 export const createFile = async (filePath: string, content: string) => {
 	const relativePath = path.relative(process.cwd(), filePath);
 	if (existsSync(filePath)) {
