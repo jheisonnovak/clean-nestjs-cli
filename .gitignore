@@ -1,4 +1,5 @@
 /node_modules
+.vscode
 
 bin/*.js
 src/**/*.js
