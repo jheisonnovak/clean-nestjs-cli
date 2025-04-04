@@ -1,7 +1,8 @@
 import chalk from "chalk";
-import { existsSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, writeFileSync } from "fs";
 import path from "path";
-import { addToArray } from "./file";
+import { Project } from "ts-morph";
+import { addToModuleArray } from "./file";
 
 export function updateModuleFile(moduleFilePath: string, filesModuleUpdate: IFileModuleUpdate[]) {
 	const relativePath = path.relative(process.cwd(), moduleFilePath);
@@ -9,37 +10,38 @@ export function updateModuleFile(moduleFilePath: string, filesModuleUpdate: IFil
 		console.warn(`${chalk.red("NOT FOUND")} ${relativePath}`);
 		process.exit(1);
 	}
-	let moduleFileContent = readFileSync(moduleFilePath, "utf8");
+	const project = new Project();
+	let sourceFile = project.addSourceFileAtPath(moduleFilePath);
 
 	filesModuleUpdate.forEach(fileModuleUpdate => {
-		const importStatements = createImport(fileModuleUpdate.imports);
-
-		if (!moduleFileContent.includes(importStatements.trim())) {
-			moduleFileContent = moduleFileContent.replace(/(import {.* from .*;)/, `$1${importStatements}`);
+		if (fileModuleUpdate.imports) {
+			const existingImport = sourceFile.getImportDeclarations().find(decl => decl.getModuleSpecifierValue() === fileModuleUpdate.imports?.name);
+			if (existingImport) {
+				const namedImports = existingImport.getNamedImports();
+				if (!namedImports.some(ni => ni.getName() === fileModuleUpdate.imports?.name)) {
+					existingImport.addNamedImport(fileModuleUpdate.imports?.name);
+				}
+			} else {
+				sourceFile.addImportDeclaration({
+					namedImports: [fileModuleUpdate.imports?.name],
+					moduleSpecifier: fileModuleUpdate.imports?.path,
+				});
+			}
 		}
+
 		fileModuleUpdate.arrayName.forEach(arrayName => {
-			moduleFileContent = addToArray(arrayName, fileModuleUpdate.content, moduleFileContent);
+			sourceFile = addToModuleArray(sourceFile, arrayName, fileModuleUpdate.content);
 		});
-
-		writeFileSync(moduleFilePath, moduleFileContent, "utf8");
 	});
+	writeFileSync(moduleFilePath, sourceFile.getFullText(), "utf8");
 	console.log(`${chalk.yellow("UPDATE")} ${relativePath}`);
-}
-
-function createImport(imports: Array<{ name: string; path: string }>) {
-	return imports
-		.map(
-			({ name, path }) => `
-import { ${name} } from "${path}";`
-		)
-		.join("");
 }
 
 export interface IFileModuleUpdate {
 	content: string;
-	imports: Array<{
+	arrayName: Array<"imports" | "controllers" | "providers" | "exports">;
+	imports?: {
 		name: string;
 		path: string;
-	}>;
-	arrayName: Array<"imports" | "controllers" | "providers" | "exports">;
+	};
 }

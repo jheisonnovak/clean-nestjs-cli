@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { existsSync, promises as fs, mkdirSync } from "fs";
 import path, { join } from "path";
+import { SourceFile, SyntaxKind } from "ts-morph";
 import { executeCommand } from "./execute-command";
 
 export const createFile = async (filePath: string, content: string) => {
@@ -37,33 +38,48 @@ export const kebabToCamel = (str: string) => {
 	return str.replace(/-./g, match => match[1].toUpperCase());
 };
 
-export const addToArray = (arrayName: "imports" | "controllers" | "providers" | "exports", itemName: string, moduleFileContent: string) => {
-	const regex = new RegExp(`(${arrayName}: \\[[^\\]]*)\\]`);
-	const match = moduleFileContent.match(regex);
-	if (match) {
-		let arrayContent = match[1].trimEnd();
-		if (!arrayContent.includes(itemName)) {
-			const items = arrayContent.split(",").map(item => item.trim());
-			const isInline = items.every(item => !item.includes("\n"));
-			const indentMatch = moduleFileContent.match(new RegExp(`(\\s*)${arrayName}:`));
-			const indent = indentMatch ? indentMatch[1] + "	" : "		";
+export const addToModuleArray = (sourceFile: SourceFile, arrayName: "imports" | "controllers" | "providers" | "exports", itemName: string) => {
+	const classWithModule = sourceFile.getClasses().find(cls => cls.getDecorator("Module"));
 
-			if (isInline) {
-				arrayContent = arrayContent.endsWith(",")
-					? `${arrayContent} ${itemName}`
-					: arrayContent.endsWith("[")
-						? `${arrayContent}${itemName}`
-						: `${arrayContent}, ${itemName}`;
-				moduleFileContent = moduleFileContent.replace(regex, `${arrayContent}]`);
-			} else {
-				arrayContent = arrayContent.endsWith(",") ? `${arrayContent}${indent}${itemName},\n	` : `${arrayContent},${indent}${itemName},`;
-				moduleFileContent = moduleFileContent.replace(regex, `${arrayContent}${indent.slice(0, -4)}]`);
+	if (!classWithModule) {
+		console.error("Module decorator not found in the file.");
+		process.exit(1);
+	}
+
+	const decorator = classWithModule.getDecorator("Module");
+	const arg = decorator?.getArguments()[0];
+
+	if (!arg || !arg.compilerNode || arg.getKind() !== SyntaxKind.ObjectLiteralExpression) {
+		console.error("Module decorator argument not found or is not an object literal.");
+		process.exit(1);
+	}
+
+	const objLiteral = arg.asKindOrThrow(SyntaxKind.ObjectLiteralExpression);
+
+	const arrayProp = objLiteral.getProperties().find(p => {
+		if (p.getKind() !== SyntaxKind.PropertyAssignment) return false;
+
+		const name = p.getKindName();
+		if (name !== arrayName) return false;
+
+		const initializer = (p as any).getInitializerIfKind(SyntaxKind.ArrayLiteralExpression);
+		return !!initializer;
+	});
+	if (!arrayProp) {
+		objLiteral.addPropertyAssignment({
+			name: arrayName,
+			initializer: `[${itemName}]`,
+		});
+	} else if (arrayProp.getKind() === SyntaxKind.PropertyAssignment) {
+		const initializer = arrayProp.getFirstDescendantByKind(SyntaxKind.ArrayLiteralExpression);
+		if (initializer) {
+			const alreadyExists = initializer.getElements().some(el => el.getText() === itemName);
+			if (!alreadyExists) {
+				initializer.addElement(itemName);
 			}
 		}
-	} else {
-		moduleFileContent = moduleFileContent.replace(/(@Module\(\{)/, `$1\n	${arrayName}: [${itemName}],`);
 	}
-	return moduleFileContent;
+	return sourceFile;
 };
 
 export const isValidName = (
