@@ -88,12 +88,12 @@ export class UseCaseGenerator extends IGenerator {
 			{
 				arrayName: ["controllers"],
 				content: controllerName,
-				imports: [{ name: controllerName, path: controllerPath }],
+				imports: { name: controllerName, path: controllerPath },
 			},
 			{
 				arrayName: ["providers", "exports"],
 				content: useCaseName,
-				imports: [{ name: useCaseName, path: useCasePath }],
+				imports: { name: useCaseName, path: useCasePath },
 			},
 		]);
 		await formatFile(moduleFilePath);

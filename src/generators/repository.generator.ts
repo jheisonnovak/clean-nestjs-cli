@@ -60,27 +60,22 @@ export class RepositoryGenerator extends IGenerator {
 
 		const repository = `${repositoryName}TypeOrmRepository`;
 		const repositoryInterface = `"I${repositoryName}Repository"`;
-		const repositoryProvider = `{
-			provide: ${repositoryInterface},
-			useExisting: ${repository},
-		}`;
+		const repositoryProvider = `{\n	provide: ${repositoryInterface},\n	useExisting: ${repository},\n}`;
 		const repositoryPath = `./repositories/${resourceNameKebab}.repository`;
 
 		updateModuleFile(moduleFilePath, [
 			{
 				arrayName: ["providers"],
 				content: repository,
-				imports: [{ name: repository, path: repositoryPath }],
+				imports: { name: repository, path: repositoryPath },
 			},
 			{
 				arrayName: ["providers"],
 				content: repositoryProvider,
-				imports: [],
 			},
 			{
 				arrayName: ["exports"],
 				content: repositoryInterface,
-				imports: [],
 			},
 		]);
 		await formatFile(moduleFilePath);
