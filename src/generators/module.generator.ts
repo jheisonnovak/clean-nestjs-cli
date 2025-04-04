@@ -40,7 +40,7 @@ export class ModuleGenerator extends IGenerator {
 			{
 				arrayName: ["imports"],
 				content: moduleClassName,
-				imports: [{ name: moduleClassName, path: moduleClassPath }],
+				imports: { name: moduleClassName, path: moduleClassPath },
 			},
 		]);
 		await formatFile(appModuleFilePath);
