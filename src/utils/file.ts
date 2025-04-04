@@ -56,15 +56,7 @@ export const addToModuleArray = (sourceFile: SourceFile, arrayName: "imports" | 
 
 	const objLiteral = arg.asKindOrThrow(SyntaxKind.ObjectLiteralExpression);
 
-	const arrayProp = objLiteral.getProperties().find(p => {
-		if (p.getKind() !== SyntaxKind.PropertyAssignment) return false;
-
-		const name = p.getKindName();
-		if (name !== arrayName) return false;
-
-		const initializer = (p as any).getInitializerIfKind(SyntaxKind.ArrayLiteralExpression);
-		return !!initializer;
-	});
+	const arrayProp = objLiteral.getProperty(arrayName);
 	if (!arrayProp) {
 		objLiteral.addPropertyAssignment({
 			name: arrayName,
