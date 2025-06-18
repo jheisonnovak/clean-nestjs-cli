@@ -19,7 +19,6 @@ import { tsconfigBuildElement } from "../elements/tsconfig-build.element";
 import { tsconfigElement } from "../elements/tsconfig.element";
 import { executeCommand } from "../utils/execute-command";
 import { createFile } from "../utils/file";
-import { getDevCommand } from "../utils/get-dev-command";
 import { getInstallCommand } from "../utils/get-install-command";
 
 export class AppGenerator {
@@ -35,10 +34,10 @@ export class AppGenerator {
 				const { packageManager, orm } = answers;
 				this.createDir(projectDir);
 				const commands: string[] = [];
-				commands.push(`${packageManager} ${getInstallCommand(packageManager)} clean-nestjs-cli ${getDevCommand(packageManager)}`);
+				commands.push(`${packageManager} ${getInstallCommand(packageManager)} clean-nestjs-cli -D`);
 				if (orm === "TypeORM") commands.push(`${packageManager} ${getInstallCommand(packageManager)} @nestjs/typeorm typeorm @nestjs/config`);
 				else if (orm === "Prisma") {
-					commands.push(`${packageManager} ${getInstallCommand(packageManager)} prisma ${getDevCommand(packageManager)}`);
+					commands.push(`${packageManager} ${getInstallCommand(packageManager)} prisma -D`);
 					commands.push(`${packageManager} ${getInstallCommand(packageManager)} @prisma/client`);
 					commands.push(`npx prisma init`);
 				}
