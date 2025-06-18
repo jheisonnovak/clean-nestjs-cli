@@ -1,4 +1,4 @@
-export const tsconfigBuildElement = () => `{
+export const tsconfigBuildElement = (): string => `{
     "extends": "./tsconfig.json",
     "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }

@@ -1,4 +1,4 @@
-export const packageElement = (projectName: string, linters: boolean) => `{
+export const packageElement = (projectName: string, linters: boolean): string => `{
 	"name": "${projectName}",
 	"version": "0.0.1",
 	"description": "",
@@ -21,29 +21,27 @@ export const packageElement = (projectName: string, linters: boolean) => `{
 		"@nestjs/common": "^11.0.13",
 		"@nestjs/core": "^11.0.13",
 		"@nestjs/platform-express": "^11.0.13",
-		"reflect-metadata": "^0.2.0",
+		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1"
 	},
 	"devDependencies": {
-		"@nestjs/cli": "^10.0.0",
-		"@nestjs/schematics": "^10.0.0",
+		"@nestjs/cli": "^11.0.0",
+		"@nestjs/schematics": "^11.0.0",
 		"@nestjs/testing": "^11.0.13",
-		"@types/express": "^4.17.17",
-		"@types/jest": "^29.5.2",
-		"@types/node": "^22.8.7",
-		"@types/supertest": "^6.0.0",${linters ? `\n		"@typescript-eslint/eslint-plugin": "^8.0.0",` : ""}${
-			linters ? `\n		"@typescript-eslint/parser": "^8.0.0",` : ""
-		}${linters ? `\n		"eslint": "^8.42.0",` : ""}${linters ? `\n		"eslint-config-prettier": "^9.0.0",` : ""}${
-			linters ? `\n		"eslint-plugin-prettier": "^5.0.0",` : ""
+		"@types/express": "^5.0.0",
+		"@types/jest": "^29.5.14",
+		"@types/node": "^22.10.7",
+		"@types/supertest": "^6.0.2",${linters ? `\n		"eslint": "^9.18.0",` : ""}${linters ? `\n		"eslint-config-prettier": "^10.0.1",` : ""}${
+			linters ? `\n		"eslint-plugin-prettier": "^5.2.2",` : ""
 		}
-		"jest": "^29.5.0",${linters ? `\n		"prettier": "^3.0.0",` : ""}
+		"jest": "^29.7.0",${linters ? `\n		"prettier": "^3.4.2",` : ""}
 		"source-map-support": "^0.5.21",
 		"supertest": "^7.0.0",
-		"ts-jest": "^29.1.0",
-		"ts-loader": "^9.4.3",
-		"ts-node": "^10.9.1",
+		"ts-jest": "^29.2.5",
+		"ts-loader": "^9.5.2",
+		"ts-node": "^10.9.2",
 		"tsconfig-paths": "^4.2.0",
-		"typescript": "^5.1.3"
+		"typescript": "^5.7.3"${linters ? `\n		,"typescript-eslint": "^8.20.0"` : ""}
 	},
 	"jest": {
 		"moduleFileExtensions": [

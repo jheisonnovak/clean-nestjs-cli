@@ -1,9 +1,9 @@
-export const eslintElement = (): string => `import prettierConfig from "eslint-config-prettier";
+import prettierConfig from "eslint-config-prettier";
 import eslintPluginPrettier from "eslint-plugin-prettier";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(tseslint.configs.recommended, prettierConfig, {
-	ignores: ["eslint.config.mjs", "node_modules/**", "dist/**"],
+	ignores: ["eslint.config.mjs", "node_modules/**"],
 	languageOptions: {
 		parser: tseslint.parser,
 		parserOptions: {
@@ -27,4 +27,3 @@ export default tseslint.config(tseslint.configs.recommended, prettierConfig, {
 		"@typescript-eslint/no-require-imports": ["error"],
 	},
 });
-`;

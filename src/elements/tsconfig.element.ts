@@ -6,7 +6,7 @@ export const tsconfigElement = (): string => `{
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"allowSyntheticDefaultImports": true,
-		"target": "ES2021",
+		"target": "ES2023",
 		"sourceMap": true,
 		"outDir": "./dist",
 		"baseUrl": "./",

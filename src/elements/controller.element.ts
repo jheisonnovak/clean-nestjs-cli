@@ -3,7 +3,7 @@ export const controllerElement = (
 	resourceNameKebab: string,
 	controllerRoute: string,
 	decapitalizedUseCaseName: string
-) => `import { Controller, Get } from "@nestjs/common";
+): string => `import { Controller, Get } from "@nestjs/common";
 import { ${capitalizedUseCaseName}UseCase } from "./${resourceNameKebab}.use-case";
 
 @Controller("${controllerRoute}")
@@ -11,7 +11,7 @@ export class ${capitalizedUseCaseName}Controller {
 	constructor(private readonly ${decapitalizedUseCaseName}UseCase: ${capitalizedUseCaseName}UseCase) {}
 
 	@Get("${resourceNameKebab}")
-	async execute() {
+	async execute(): Promise<void> {
 		return await this.${decapitalizedUseCaseName}UseCase.execute();
 	}
 }

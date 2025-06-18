@@ -1,4 +1,4 @@
-export const appModuleElement = () => `import { Module } from "@nestjs/common";
+export const appModuleElement = (): string => `import { Module } from "@nestjs/common";
 
 @Module({
 	imports: [],

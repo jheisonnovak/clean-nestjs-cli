@@ -51,7 +51,7 @@ export class UseCaseGenerator extends IGenerator {
 		moduleNameKebab: string,
 		resourceNameKebab: string,
 		options: IGeneratorOptions
-	) {
+	): Promise<void> {
 		const basePath = path.join(process.cwd(), "./src/modules");
 		const useCaseDir = path.join(basePath, modulePath, "use-cases", resourceNameKebab);
 		startsInBasePath(basePath, useCaseDir);

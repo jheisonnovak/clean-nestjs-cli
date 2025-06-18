@@ -4,10 +4,11 @@ import { LoaderCommand } from "../commands/loader.command";
 
 const localPath = [process.cwd(), "node_modules", "clean-nestjs-cli", "src", "commands"];
 
-export const localLibraryExists = () => {
+export const localLibraryExists = (): boolean => {
 	return existsSync(join(...localPath, "loader.command.js"));
 };
 
-export const localLibraryPath = (): typeof LoaderCommand => {
-	return require(join(...localPath, "loader.command")).LoaderCommand;
+export const localLibraryPath = async (): Promise<typeof LoaderCommand> => {
+	const module = await import(join(...localPath, "loader.command"));
+	return module.LoaderCommand;
 };

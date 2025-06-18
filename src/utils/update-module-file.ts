@@ -4,7 +4,7 @@ import path from "path";
 import { Project } from "ts-morph";
 import { addToModuleArray } from "./file";
 
-export function updateModuleFile(moduleFilePath: string, filesModuleUpdate: IFileModuleUpdate[]) {
+export function updateModuleFile(moduleFilePath: string, filesModuleUpdate: IFileModuleUpdate[]): void {
 	const relativePath = path.relative(process.cwd(), moduleFilePath);
 	if (!existsSync(moduleFilePath)) {
 		console.warn(`${chalk.red("NOT FOUND")} ${relativePath}`);

@@ -1,4 +1,4 @@
-export const readmeElement = (packageManager: string) => `<p align="center">
+export const readmeElement = (packageManager: string): string => `<p align="center">
     <a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/v/clean-nestjs-cli.svg" alt ="NPM Version"></a> <a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/l/clean-nestjs-cli.svg" alt ="License"></a> <a href="https://www.npmjs.com/package/clean-nestjs-cli"><img src="https://img.shields.io/npm/d18m/clean-nestjs-cli.svg" alt ="Downloads"></a>
 </p>
 <h1 align="center">Clean Architecture Project</h1>
