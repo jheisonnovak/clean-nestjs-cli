@@ -6,7 +6,7 @@ import * as path from "path";
 import { appE2eSpecElement } from "../elements/app-e2e-spec.element";
 import { appModuleElement } from "../elements/app-module.element";
 import { databaseConfigElement } from "../elements/database-config.element";
-import { eslintrcElement } from "../elements/eslintrc.element";
+import { eslintElement } from "../elements/eslintrc.element";
 import { gitIgnoreElement } from "../elements/gitignore.element";
 import { jestE2eElement } from "../elements/jest-e2e.element";
 import { mainElement } from "../elements/main.element";
@@ -58,7 +58,13 @@ export class AppGenerator {
 			.catch(() => console.log("Console has been closed"));
 	}
 
-	private static async generateFiles(projectName: string, projectDir: string, linters: boolean, orm: string, packageManager: string) {
+	private static async generateFiles(
+		projectName: string,
+		projectDir: string,
+		linters: boolean,
+		orm: string,
+		packageManager: string
+	): Promise<void> {
 		const tsConfigContent = tsconfigElement();
 		const tsConfigBuildContent = tsconfigBuildElement();
 		const packageContent = packageElement(projectName, linters);
@@ -70,9 +76,9 @@ export class AppGenerator {
 		const jestE2eContent = jestE2eElement();
 		if (linters) {
 			const prettierrcContent = prettierrcElement();
-			const eslintrcContent = eslintrcElement();
+			const eslintrcContent = eslintElement();
 			await createFile(path.join(projectDir, ".prettierrc"), prettierrcContent);
-			await createFile(path.join(projectDir, ".eslintrc.js"), eslintrcContent);
+			await createFile(path.join(projectDir, "eslint.config.mjs"), eslintrcContent);
 		}
 		await createFile(path.join(projectDir, "README.md"), readmeContent);
 		await createFile(path.join(projectDir, "tsconfig.json"), tsConfigContent);
@@ -89,7 +95,7 @@ export class AppGenerator {
 		}
 	}
 
-	private static getQuestions() {
+	private static getQuestions(): DistinctQuestion[] {
 		const questions: DistinctQuestion[] = [
 			{
 				type: "list",
@@ -109,7 +115,7 @@ export class AppGenerator {
 		return questions;
 	}
 
-	private static createDir(dir: string) {
+	private static createDir(dir: string): void {
 		if (!existsSync(dir)) {
 			mkdirSync(dir, { recursive: true });
 		}
