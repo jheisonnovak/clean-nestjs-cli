@@ -1,4 +1,4 @@
-export const appE2eSpecElement = () => `import { Test, TestingModule } from "@nestjs/testing";
+export const appE2eSpecElement = (): string => `import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "./../src/app.module";

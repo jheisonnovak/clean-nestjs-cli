@@ -3,7 +3,7 @@ import { AppGenerator } from "../generators/app.generator";
 import { isValidName } from "../utils/file";
 
 export class NewCommand {
-	async load(program: Command) {
+	async load(program: Command): Promise<void> {
 		program
 			.command("new <project-name>")
 			.alias("n")

@@ -1,8 +1,8 @@
-export const useCaseElement = (capitalizedUseCaseName: string) => `import { Injectable } from "@nestjs/common";
+export const useCaseElement = (capitalizedUseCaseName: string): string => `import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class ${capitalizedUseCaseName}UseCase {
-	async execute() {
+	async execute(): Promise<void> {
 		// Implement the use case
 	}
 }

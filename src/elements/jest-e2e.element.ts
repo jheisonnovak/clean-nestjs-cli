@@ -1,4 +1,4 @@
-export const jestE2eElement = () => `{
+export const jestE2eElement = (): string => `{
 	"moduleFileExtensions": ["js", "json", "ts"],
 	"rootDir": ".",
 	"testEnvironment": "node",

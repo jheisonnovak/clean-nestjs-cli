@@ -5,7 +5,7 @@ export const specElement = (
 	decapitalizedUseCaseName: string,
 	capitalizedModuleName: string,
 	resourceNameKebab: string
-) => `import { Test, TestingModule } from "@nestjs/testing";
+): string => `import { Test, TestingModule } from "@nestjs/testing";
 import { ${capitalizedUseCaseName}UseCase } from "./${resourceNameKebab}.use-case";
 import { I${capitalizedModuleName}Repository } from "../../models/interfaces/${moduleNameKebab}-repository.interface";
 

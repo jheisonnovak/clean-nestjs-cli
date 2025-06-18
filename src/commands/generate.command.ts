@@ -4,7 +4,7 @@ import { isValidName } from "../utils/file";
 import { getGenerator, getNameAliasPairs } from "../utils/get-generator";
 
 export class GenerateCommand {
-	public async load(program: Command) {
+	public async load(program: Command): Promise<void> {
 		program
 			.command("generate <schematics> <module> [resource]")
 			.alias("g")

@@ -4,7 +4,7 @@ import path, { join } from "path";
 import { SourceFile, SyntaxKind } from "ts-morph";
 import { executeCommand } from "./execute-command";
 
-export const createFile = async (filePath: string, content: string) => {
+export const createFile = async (filePath: string, content: string): Promise<void> => {
 	const relativePath = path.relative(process.cwd(), filePath);
 	if (existsSync(filePath)) {
 		console.warn(`${chalk.yellow("ALREADY EXISTS")} ${relativePath}`);
@@ -24,21 +24,25 @@ export const createFile = async (filePath: string, content: string) => {
 	}
 };
 
-export const createDirectory = (dirPath: string) => {
+export const createDirectory = (dirPath: string): void => {
 	if (!existsSync(dirPath)) {
 		mkdirSync(dirPath, { recursive: true });
 	}
 };
 
-export const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+export const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
 
-export const decapitalize = (str: string) => str.charAt(0).toLowerCase() + str.slice(1);
+export const decapitalize = (str: string): string => str.charAt(0).toLowerCase() + str.slice(1);
 
-export const kebabToCamel = (str: string) => {
+export const kebabToCamel = (str: string): string => {
 	return str.replace(/-./g, match => match[1].toUpperCase());
 };
 
-export const addToModuleArray = (sourceFile: SourceFile, arrayName: "imports" | "controllers" | "providers" | "exports", itemName: string) => {
+export const addToModuleArray = (
+	sourceFile: SourceFile,
+	arrayName: "imports" | "controllers" | "providers" | "exports",
+	itemName: string
+): SourceFile => {
 	const classWithModule = sourceFile.getClasses().find(cls => cls.getDecorator("Module"));
 
 	if (!classWithModule) {
@@ -78,22 +82,24 @@ export const isValidName = (
 	fileName: string,
 	pattern: RegExp = /^[a-z0-9.-]+$/,
 	message = "Invalid file name. Try using a kebab-case format. Ex: my-name"
-) => {
+): boolean => {
 	const isValid = pattern.test(fileName);
 	if (!isValid) {
 		console.error(message);
 		process.exit(1);
 	}
+	return true;
 };
 
-export const startsInBasePath = (basePath: string, resourcePath: string) => {
+export const startsInBasePath = (basePath: string, resourcePath: string): boolean => {
 	if (!resourcePath.startsWith(basePath)) {
 		console.error("The resource path must be inside the base path");
 		process.exit(1);
 	}
+	return true;
 };
 
-export const formatFile = async (path: string) => {
+export const formatFile = async (path: string): Promise<void> => {
 	const prettierrc = join(process.cwd() + "/.prettierrc");
 	if (existsSync(prettierrc)) {
 		try {

@@ -6,17 +6,20 @@ import * as path from "path";
 import { appE2eSpecElement } from "../elements/app-e2e-spec.element";
 import { appModuleElement } from "../elements/app-module.element";
 import { databaseConfigElement } from "../elements/database-config.element";
-import { eslintrcElement } from "../elements/eslintrc.element";
+import { eslintElement } from "../elements/eslintrc.element";
 import { gitIgnoreElement } from "../elements/gitignore.element";
 import { jestE2eElement } from "../elements/jest-e2e.element";
 import { mainElement } from "../elements/main.element";
 import { packageElement } from "../elements/package.element";
 import { prettierrcElement } from "../elements/prettierrc.element";
+import { prismaModuleElement } from "../elements/prisma-module.element";
+import { prismaServiceElement } from "../elements/prisma-service.element";
 import { readmeElement } from "../elements/readme.element";
 import { tsconfigBuildElement } from "../elements/tsconfig-build.element";
 import { tsconfigElement } from "../elements/tsconfig.element";
 import { executeCommand } from "../utils/execute-command";
 import { createFile } from "../utils/file";
+import { getInstallCommand } from "../utils/get-install-command";
 
 export class AppGenerator {
 	static async generate(projectNameKebab: string, options: { linters: boolean }): Promise<void> {
@@ -31,13 +34,12 @@ export class AppGenerator {
 				const { packageManager, orm } = answers;
 				this.createDir(projectDir);
 				const commands: string[] = [];
-				commands.push(
-					`${packageManager} ${packageManager === "npm" ? "install" : "add"} clean-nestjs-cli ${
-						packageManager === "yarn" ? "--dev" : "--save-dev"
-					}`
-				);
-				if (orm === "TypeORM") {
-					commands.push(`${packageManager} ${packageManager === "npm" ? "install" : "add"} @nestjs/typeorm typeorm @nestjs/config`);
+				commands.push(`${packageManager} ${getInstallCommand(packageManager)} clean-nestjs-cli -D`);
+				if (orm === "TypeORM") commands.push(`${packageManager} ${getInstallCommand(packageManager)} @nestjs/typeorm typeorm @nestjs/config`);
+				else if (orm === "Prisma") {
+					commands.push(`${packageManager} ${getInstallCommand(packageManager)} prisma -D`);
+					commands.push(`${packageManager} ${getInstallCommand(packageManager)} @prisma/client`);
+					commands.push(`npx prisma init`);
 				}
 				commands.push(`${packageManager} install`);
 				const dependencies = ora("Installing dependencies...");
@@ -58,7 +60,13 @@ export class AppGenerator {
 			.catch(() => console.log("Console has been closed"));
 	}
 
-	private static async generateFiles(projectName: string, projectDir: string, linters: boolean, orm: string, packageManager: string) {
+	private static async generateFiles(
+		projectName: string,
+		projectDir: string,
+		linters: boolean,
+		orm: string,
+		packageManager: string
+	): Promise<void> {
 		const tsConfigContent = tsconfigElement();
 		const tsConfigBuildContent = tsconfigBuildElement();
 		const packageContent = packageElement(projectName, linters);
@@ -70,9 +78,9 @@ export class AppGenerator {
 		const jestE2eContent = jestE2eElement();
 		if (linters) {
 			const prettierrcContent = prettierrcElement();
-			const eslintrcContent = eslintrcElement();
+			const eslintrcContent = eslintElement();
 			await createFile(path.join(projectDir, ".prettierrc"), prettierrcContent);
-			await createFile(path.join(projectDir, ".eslintrc.js"), eslintrcContent);
+			await createFile(path.join(projectDir, "eslint.config.mjs"), eslintrcContent);
 		}
 		await createFile(path.join(projectDir, "README.md"), readmeContent);
 		await createFile(path.join(projectDir, "tsconfig.json"), tsConfigContent);
@@ -86,10 +94,13 @@ export class AppGenerator {
 		if (orm === "TypeORM") {
 			const databaseConfigContent = databaseConfigElement();
 			await createFile(path.join(projectDir, "src", "shared", "databases", "database.config.service.ts"), databaseConfigContent);
+		} else if (orm === "Prisma") {
+			await createFile(path.join(projectDir, "src", "shared", "databases", "prisma.service.ts"), prismaServiceElement());
+			await createFile(path.join(projectDir, "src", "shared", "databases", "prisma.module.ts"), prismaModuleElement());
 		}
 	}
 
-	private static getQuestions() {
+	private static getQuestions(): DistinctQuestion[] {
 		const questions: DistinctQuestion[] = [
 			{
 				type: "list",
@@ -102,14 +113,14 @@ export class AppGenerator {
 				type: "list",
 				name: "orm",
 				message: "Choose your ORM",
-				choices: ["TypeORM", "None"],
+				choices: ["TypeORM", "Prisma", "None"],
 				default: "TypeORM",
 			},
 		];
 		return questions;
 	}
 
-	private static createDir(dir: string) {
+	private static createDir(dir: string): void {
 		if (!existsSync(dir)) {
 			mkdirSync(dir, { recursive: true });
 		}
