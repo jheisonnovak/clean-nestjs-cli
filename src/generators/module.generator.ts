@@ -9,7 +9,7 @@ import { updateModuleFile } from "../utils/update-module-file";
 import { IGenerator, IGeneratorOptions } from "./generate.generator";
 
 export class ModuleGenerator extends IGenerator {
-	static override async generate(moduleNameKebab: string, options: IGeneratorOptions) {
+	static override async generate(moduleNameKebab: string, options: IGeneratorOptions): Promise<void> {
 		const resourceNameCamel = kebabToCamel(moduleNameKebab);
 		const moduleName = capitalize(resourceNameCamel);
 		const resourcePath = options.path;

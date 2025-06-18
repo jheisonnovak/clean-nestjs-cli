@@ -11,11 +11,11 @@ export const generators = {
 	uc: UseCaseGenerator,
 };
 
-export function getGenerator(type: string) {
+export function getGenerator(type: string): typeof ModuleGenerator | typeof RepositoryGenerator | typeof UseCaseGenerator | null {
 	return generators[type as keyof typeof generators] || null;
 }
 
-export const getNameAliasPairs = () => {
+export const getNameAliasPairs = (): string => {
 	const names = Object.keys(generators);
 	const pairs = [];
 	for (let i = 0; i < names.length; i += 2) {

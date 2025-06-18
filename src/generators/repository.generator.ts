@@ -44,7 +44,7 @@ export class RepositoryGenerator extends IGenerator {
 		}
 	}
 
-	static async generateRepository(resourceNameKebab: string, modulePath: string, moduleFilePath: string) {
+	static async generateRepository(resourceNameKebab: string, modulePath: string, moduleFilePath: string): Promise<void> {
 		const repositoryNameCamel = kebabToCamel(resourceNameKebab);
 		const repositoryName = capitalize(repositoryNameCamel);
 		const basePath = path.join(process.cwd(), "./src/modules/");
