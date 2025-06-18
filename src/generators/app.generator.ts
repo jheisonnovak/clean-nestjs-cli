@@ -12,11 +12,15 @@ import { jestE2eElement } from "../elements/jest-e2e.element";
 import { mainElement } from "../elements/main.element";
 import { packageElement } from "../elements/package.element";
 import { prettierrcElement } from "../elements/prettierrc.element";
+import { prismaModuleElement } from "../elements/prisma-module.element";
+import { prismaServiceElement } from "../elements/prisma-service.element";
 import { readmeElement } from "../elements/readme.element";
 import { tsconfigBuildElement } from "../elements/tsconfig-build.element";
 import { tsconfigElement } from "../elements/tsconfig.element";
 import { executeCommand } from "../utils/execute-command";
 import { createFile } from "../utils/file";
+import { getDevCommand } from "../utils/get-dev-command";
+import { getInstallCommand } from "../utils/get-install-command";
 
 export class AppGenerator {
 	static async generate(projectNameKebab: string, options: { linters: boolean }): Promise<void> {
@@ -31,13 +35,12 @@ export class AppGenerator {
 				const { packageManager, orm } = answers;
 				this.createDir(projectDir);
 				const commands: string[] = [];
-				commands.push(
-					`${packageManager} ${packageManager === "npm" ? "install" : "add"} clean-nestjs-cli ${
-						packageManager === "yarn" ? "--dev" : "--save-dev"
-					}`
-				);
-				if (orm === "TypeORM") {
-					commands.push(`${packageManager} ${packageManager === "npm" ? "install" : "add"} @nestjs/typeorm typeorm @nestjs/config`);
+				commands.push(`${packageManager} ${getInstallCommand(packageManager)} clean-nestjs-cli ${getDevCommand(packageManager)}`);
+				if (orm === "TypeORM") commands.push(`${packageManager} ${getInstallCommand(packageManager)} @nestjs/typeorm typeorm @nestjs/config`);
+				else if (orm === "Prisma") {
+					commands.push(`${packageManager} ${getInstallCommand(packageManager)} prisma ${getDevCommand(packageManager)}`);
+					commands.push(`${packageManager} ${getInstallCommand(packageManager)} @prisma/client`);
+					commands.push(`npx prisma init`);
 				}
 				commands.push(`${packageManager} install`);
 				const dependencies = ora("Installing dependencies...");
@@ -92,6 +95,9 @@ export class AppGenerator {
 		if (orm === "TypeORM") {
 			const databaseConfigContent = databaseConfigElement();
 			await createFile(path.join(projectDir, "src", "shared", "databases", "database.config.service.ts"), databaseConfigContent);
+		} else if (orm === "Prisma") {
+			await createFile(path.join(projectDir, "src", "shared", "databases", "prisma.service.ts"), prismaServiceElement());
+			await createFile(path.join(projectDir, "src", "shared", "databases", "prisma.module.ts"), prismaModuleElement());
 		}
 	}
 
@@ -108,7 +114,7 @@ export class AppGenerator {
 				type: "list",
 				name: "orm",
 				message: "Choose your ORM",
-				choices: ["TypeORM", "None"],
+				choices: ["TypeORM", "Prisma", "None"],
 				default: "TypeORM",
 			},
 		];
