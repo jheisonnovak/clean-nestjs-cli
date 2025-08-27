@@ -2,11 +2,13 @@ import chalk from "chalk";
 import * as fs from "fs";
 import inquirer from "inquirer";
 import * as path from "path";
+import { isPlural, plural } from "pluralize";
 import { controllerElement } from "../elements/controller.element";
 import { specElement } from "../elements/spec.element";
 import { useCaseElement } from "../elements/use-case.element";
 import { createModulePath } from "../utils/create-module-path";
 import { capitalize, createFile, decapitalize, formatFile, kebabToCamel, startsInBasePath } from "../utils/file";
+import { getRouteFromAction } from "../utils/get-route-from-action";
 import { updateModuleFile } from "../utils/update-module-file";
 import { IGenerator, IGeneratorOptions } from "./generate.generator";
 import { ModuleGenerator } from "./module.generator";
@@ -55,6 +57,8 @@ export class UseCaseGenerator extends IGenerator {
 		const basePath = path.join(process.cwd(), "./src/modules");
 		const useCaseDir = path.join(basePath, modulePath, "use-cases", resourceNameKebab);
 		startsInBasePath(basePath, useCaseDir);
+		const endpoint = isPlural(modulePath) ? modulePath : plural(modulePath);
+		const controllerConfig = getRouteFromAction(resourceNameKebab);
 
 		const moduleNameCamel = kebabToCamel(moduleNameKebab);
 		const useCaseNameCamel = kebabToCamel(resourceNameKebab);
@@ -63,7 +67,14 @@ export class UseCaseGenerator extends IGenerator {
 		const decapitalizedUseCaseName = decapitalize(useCaseNameCamel);
 
 		const useCaseContent = useCaseElement(capitalizedUseCaseName);
-		const controllerContent = controllerElement(capitalizedUseCaseName, resourceNameKebab, modulePath, decapitalizedUseCaseName);
+		const controllerContent = controllerElement(
+			capitalizedUseCaseName,
+			resourceNameKebab,
+			endpoint,
+			decapitalizedUseCaseName,
+			controllerConfig.method,
+			controllerConfig.path
+		);
 
 		await createFile(path.join(useCaseDir, `${resourceNameKebab}.use-case.ts`), useCaseContent);
 		await createFile(path.join(useCaseDir, `${resourceNameKebab}.controller.ts`), controllerContent);
