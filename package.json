@@ -1,6 +1,6 @@
 {
 	"name": "clean-nestjs-cli",
-	"version": "2.1.1",
+	"version": "2.2.0",
 	"description": "A command-line interface tool designed to streamline the creation and management of Nest projects following Clean Architecture principles.",
 	"bin": {
 		"clean-nest": "./bin/index.js",
@@ -25,6 +25,7 @@
 	},
 	"homepage": "https://github.com/jheisonnovak/clean-nestjs-cli#readme",
 	"dependencies": {
+		"@types/pluralize": "^0.0.33",
 		"chalk": "^5.5.0",
 		"commander": "^14.0.0",
 		"inquirer": "^12.0.0",
