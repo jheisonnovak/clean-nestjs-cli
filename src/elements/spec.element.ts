@@ -23,12 +23,16 @@ describe("${capitalizedUseCaseName}", () => {
 		${moduleNameCamel}Repository = module.get<I${capitalizedModuleName}Repository>("I${capitalizedModuleName}Repository");
 	});
 
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
+
 	it("should be defined", () => {
 		expect(${decapitalizedUseCaseName}UseCase).toBeDefined();
 		expect(${moduleNameCamel}Repository).toBeDefined();
 	});
 
-	describe("${capitalizedUseCaseName}UseCase", () => {
+	describe("execute", () => {
 		// add test cases
 	});
 });
