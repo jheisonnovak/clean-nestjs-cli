@@ -1,6 +1,5 @@
 import { existsSync, mkdirSync } from "fs";
-import inquirer from "inquirer";
-import { DistinctQuestion } from "inquirer/dist/commonjs/types";
+import inquirer, { DistinctQuestion } from "inquirer";
 import ora from "ora";
 import * as path from "path";
 import { appE2eSpecElement } from "../elements/app-e2e-spec.element";
@@ -103,14 +102,14 @@ export class AppGenerator {
 	private static getQuestions(): DistinctQuestion[] {
 		const questions: DistinctQuestion[] = [
 			{
-				type: "list",
+				type: "select",
 				name: "packageManager",
 				message: "Choose your package manager",
 				choices: ["npm", "yarn", "pnpm"],
 				default: "npm",
 			},
 			{
-				type: "list",
+				type: "select",
 				name: "orm",
 				message: "Choose your ORM",
 				choices: ["TypeORM", "Prisma", "None"],
