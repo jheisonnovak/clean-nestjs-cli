@@ -1,6 +1,6 @@
 permissions:
     contents: read
-name: PR Build Check
+name: PR Validation
 
 on:
     pull_request:
@@ -10,8 +10,13 @@ on:
             - "**.md"
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+    validate:
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, windows-latest]
+                node-version: [20, 22]
 
         steps:
             - name: Checkout repo
@@ -20,10 +25,11 @@ jobs:
             - name: Setup Node
               uses: actions/setup-node@v4
               with:
-                  node-version: 22
+                  node-version: ${{ matrix.node-version }}
+                  cache: npm
 
             - name: Install dependencies
               run: npm ci
 
-            - name: Build project
-              run: npm run build
+            - name: Run validation suite
+              run: npm run validate
