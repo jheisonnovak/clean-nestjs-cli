@@ -15,7 +15,7 @@ export function updateModuleFile(moduleFilePath: string, filesModuleUpdate: IFil
 
 	filesModuleUpdate.forEach(fileModuleUpdate => {
 		if (fileModuleUpdate.imports) {
-			const existingImport = sourceFile.getImportDeclarations().find(decl => decl.getModuleSpecifierValue() === fileModuleUpdate.imports?.name);
+			const existingImport = sourceFile.getImportDeclarations().find(decl => decl.getModuleSpecifierValue() === fileModuleUpdate.imports?.path);
 			if (existingImport) {
 				const namedImports = existingImport.getNamedImports();
 				if (!namedImports.some(ni => ni.getName() === fileModuleUpdate.imports?.name)) {

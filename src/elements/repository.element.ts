@@ -1,8 +1,28 @@
-export const repositoryElement = (repositoryName: string, resourceNameKebab: string): string => `import { Injectable } from "@nestjs/common";
-import { I${repositoryName}Repository } from "../models/interfaces/${resourceNameKebab}-repository.interface";
+export const typeOrmRepositoryElement = (
+	repositoryName: string,
+	repositoryInterfaceName: string,
+	resourceNameKebab: string
+): string => `import { Injectable } from "@nestjs/common";
+import { ${repositoryInterfaceName} } from "../../domain/repositories/${resourceNameKebab}.repository";
 
 @Injectable()
-export class ${repositoryName}TypeOrmRepository implements I${repositoryName}Repository {
-	// Implements the methods defined in the interface
+export class ${repositoryName} implements ${repositoryInterfaceName} {
+	// Implements the methods defined in the domain repository contract.
+}
+`;
+
+export const prismaRepositoryElement = (
+	repositoryName: string,
+	repositoryInterfaceName: string,
+	resourceNameKebab: string
+): string => `import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../../../shared/databases/prisma.service";
+import { ${repositoryInterfaceName} } from "../../domain/repositories/${resourceNameKebab}.repository";
+
+@Injectable()
+export class ${repositoryName} implements ${repositoryInterfaceName} {
+	constructor(private readonly prisma: PrismaService) {}
+
+	// Implements the methods defined in the domain repository contract.
 }
 `;
