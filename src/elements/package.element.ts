@@ -19,8 +19,12 @@ export const packageElement = (projectName: string, linters: boolean): string =>
 	},
 	"dependencies": {
 		"@nestjs/common": "^11.0.13",
+		"@nestjs/config": "^4.0.4",
 		"@nestjs/core": "^11.0.13",
 		"@nestjs/platform-express": "^11.0.13",
+		"@nestjs/swagger": "^11.2.7",
+		"class-transformer": "^0.5.1",
+		"class-validator": "^0.15.1",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1"
 	},
@@ -41,7 +45,7 @@ export const packageElement = (projectName: string, linters: boolean): string =>
 		"ts-loader": "^9.5.2",
 		"ts-node": "^10.9.2",
 		"tsconfig-paths": "^4.2.0",
-		"typescript": "^5.7.3"${linters ? `\n		,"typescript-eslint": "^8.20.0"` : ""}
+		"typescript": "^6.0.3"${linters ? `\n		,"typescript-eslint": "^8.20.0"` : ""}
 	},
 	"jest": {
 		"moduleFileExtensions": [

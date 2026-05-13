@@ -8,4 +8,6 @@ export abstract class IGenerator {
 export interface IGeneratorOptions {
 	path: string;
 	spec: boolean;
+	orm?: string;
+	layer?: string;
 }

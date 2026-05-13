@@ -48,6 +48,7 @@ export const addToModuleArray = (
 	if (!classWithModule) {
 		console.error("Module decorator not found in the file.");
 		process.exit(1);
+		throw new Error("Module decorator not found in the file.");
 	}
 
 	const decorator = classWithModule.getDecorator("Module");
@@ -56,6 +57,7 @@ export const addToModuleArray = (
 	if (!arg || !arg.compilerNode || arg.getKind() !== SyntaxKind.ObjectLiteralExpression) {
 		console.error("Module decorator argument not found or is not an object literal.");
 		process.exit(1);
+		throw new Error("Module decorator argument not found or is not an object literal.");
 	}
 
 	const objLiteral = arg.asKindOrThrow(SyntaxKind.ObjectLiteralExpression);

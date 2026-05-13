@@ -5,7 +5,10 @@
 		"strict": true,
 		"declaration": true,
 		"esModuleInterop": true,
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"types": ["node"],
+		"moduleResolution": "node",
+		"ignoreDeprecations": "6.0"
 	},
 	"include": ["src/**/*.ts", "bin/**/*.ts"],
 	"exclude": ["node_modules"]

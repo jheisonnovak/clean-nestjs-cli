@@ -16,6 +16,7 @@ import { prismaServiceElement } from "../elements/prisma-service.element";
 import { readmeElement } from "../elements/readme.element";
 import { tsconfigBuildElement } from "../elements/tsconfig-build.element";
 import { tsconfigElement } from "../elements/tsconfig.element";
+import { cleanNestConfigElement, normalizeOrm, Orm } from "../utils/clean-config";
 import { executeCommand } from "../utils/execute-command";
 import { createFile } from "../utils/file";
 import { getInstallCommand } from "../utils/get-install-command";
@@ -31,11 +32,12 @@ export class AppGenerator {
 			.prompt(questions)
 			.then(async answers => {
 				const { packageManager, orm } = answers;
+				const normalizedOrm = normalizeOrm(orm) ?? "typeorm";
 				this.createDir(projectDir);
 				const commands: string[] = [];
 				commands.push(`${packageManager} ${getInstallCommand(packageManager)} clean-nestjs-cli -D`);
-				if (orm === "TypeORM") commands.push(`${packageManager} ${getInstallCommand(packageManager)} @nestjs/typeorm typeorm @nestjs/config`);
-				else if (orm === "Prisma") {
+				if (normalizedOrm === "typeorm") commands.push(`${packageManager} ${getInstallCommand(packageManager)} @nestjs/typeorm typeorm`);
+				else if (normalizedOrm === "prisma") {
 					commands.push(`${packageManager} ${getInstallCommand(packageManager)} prisma -D`);
 					commands.push(`${packageManager} ${getInstallCommand(packageManager)} @prisma/client`);
 					commands.push(`npx prisma init`);
@@ -45,7 +47,7 @@ export class AppGenerator {
 				const generatingFiles = ora("Generating files...");
 				try {
 					await executeCommand(`${packageManager} --version`, projectDir);
-					await this.generateFiles(projectName, projectDir, options.linters, orm, packageManager);
+					await this.generateFiles(projectName, projectDir, options.linters, normalizedOrm, packageManager);
 					generatingFiles.succeed("Files generated");
 					dependencies.start();
 					for (const command of commands) {
@@ -63,7 +65,7 @@ export class AppGenerator {
 		projectName: string,
 		projectDir: string,
 		linters: boolean,
-		orm: string,
+		orm: Orm,
 		packageManager: string
 	): Promise<void> {
 		const tsConfigContent = tsconfigElement();
@@ -82,6 +84,7 @@ export class AppGenerator {
 			await createFile(path.join(projectDir, "eslint.config.mjs"), eslintrcContent);
 		}
 		await createFile(path.join(projectDir, "README.md"), readmeContent);
+		await createFile(path.join(projectDir, "clean-nest.json"), cleanNestConfigElement(orm));
 		await createFile(path.join(projectDir, "tsconfig.json"), tsConfigContent);
 		await createFile(path.join(projectDir, "tsconfig.build.json"), tsConfigBuildContent);
 		await createFile(path.join(projectDir, "package.json"), packageContent);
@@ -90,10 +93,10 @@ export class AppGenerator {
 		await createFile(path.join(projectDir, ".gitignore"), gitIgnoreContent);
 		await createFile(path.join(projectDir, "test", "app.e2e-spec.ts"), appE2eSpecContent);
 		await createFile(path.join(projectDir, "test", "jest-e2e.json"), jestE2eContent);
-		if (orm === "TypeORM") {
+		if (orm === "typeorm") {
 			const databaseConfigContent = databaseConfigElement();
 			await createFile(path.join(projectDir, "src", "shared", "databases", "database.config.service.ts"), databaseConfigContent);
-		} else if (orm === "Prisma") {
+		} else if (orm === "prisma") {
 			await createFile(path.join(projectDir, "src", "shared", "databases", "prisma.service.ts"), prismaServiceElement());
 			await createFile(path.join(projectDir, "src", "shared", "databases", "prisma.module.ts"), prismaModuleElement());
 		}
@@ -112,8 +115,8 @@ export class AppGenerator {
 				type: "select",
 				name: "orm",
 				message: "Choose your ORM",
-				choices: ["TypeORM", "Prisma", "None"],
-				default: "TypeORM",
+				choices: ["typeorm", "prisma", "none"],
+				default: "typeorm",
 			},
 		];
 		return questions;
