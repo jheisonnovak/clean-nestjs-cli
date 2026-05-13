@@ -13,6 +13,10 @@ describe("dependency contracts", () => {
 		expect(getGenerator("rp")?.name).toBe("RepositoryGenerator");
 		expect(getGenerator("use-case")?.name).toBe("UseCaseGenerator");
 		expect(getGenerator("uc")?.name).toBe("UseCaseGenerator");
+		expect(getGenerator("entity")?.name).toBe("EntityGenerator");
+		expect(getGenerator("e")?.name).toBe("EntityGenerator");
+		expect(getGenerator("error")?.name).toBe("ErrorGenerator");
+		expect(getGenerator("er")?.name).toBe("ErrorGenerator");
 		expect(getGenerator("unknown")).toBeNull();
 	});
 

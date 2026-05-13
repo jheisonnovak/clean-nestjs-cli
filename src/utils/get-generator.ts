@@ -1,3 +1,5 @@
+import { EntityGenerator } from "../generators/entity.generator";
+import { ErrorGenerator } from "../generators/error.generator";
 import { ModuleGenerator } from "../generators/module.generator";
 import { RepositoryGenerator } from "../generators/repository.generator";
 import { UseCaseGenerator } from "../generators/use-case.generator";
@@ -9,9 +11,13 @@ export const generators = {
 	rp: RepositoryGenerator,
 	"use-case": UseCaseGenerator,
 	uc: UseCaseGenerator,
+	entity: EntityGenerator,
+	e: EntityGenerator,
+	error: ErrorGenerator,
+	er: ErrorGenerator,
 };
 
-export function getGenerator(type: string): typeof ModuleGenerator | typeof RepositoryGenerator | typeof UseCaseGenerator | null {
+export function getGenerator(type: string): (typeof generators)[keyof typeof generators] | null {
 	return generators[type as keyof typeof generators] || null;
 }
 
