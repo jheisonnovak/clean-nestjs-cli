@@ -4,6 +4,8 @@ import path from "path";
 import { Project, Scope } from "ts-morph";
 
 export interface ControllerMethodUpdate {
+	applicationDtoName?: string;
+	applicationDtoPath?: string;
 	bodyDtoName?: string;
 	bodyDtoPath?: string;
 	methodName: string;
@@ -27,9 +29,16 @@ export function updateControllerFile(controllerFilePath: string, update: Control
 	const sourceFile = project.addSourceFileAtPath(controllerFilePath);
 
 	addNamedImport(sourceFile, update.httpMethod, "@nestjs/common");
+	const usesId = update.httpPath?.includes(":id") ?? false;
+	if (usesId) {
+		addNamedImport(sourceFile, "Param", "@nestjs/common");
+	}
 	if (update.bodyDtoName && update.bodyDtoPath) {
 		addNamedImport(sourceFile, "Body", "@nestjs/common");
 		addNamedImport(sourceFile, update.bodyDtoName, update.bodyDtoPath);
+	}
+	if (update.applicationDtoName && update.applicationDtoPath) {
+		addNamedImport(sourceFile, update.applicationDtoName, update.applicationDtoPath);
 	}
 	if (update.responseDtoName && update.responseDtoPath) {
 		addNamedImport(sourceFile, update.responseDtoName, update.responseDtoPath);
@@ -57,18 +66,22 @@ export function updateControllerFile(controllerFilePath: string, update: Control
 	if (!controllerClass.getMethod(update.methodName)) {
 		const hasBody = Boolean(update.bodyDtoName);
 		const returnType = update.responseDtoName ? `Promise<${update.responseDtoName}>` : "Promise<void>";
-		const executeArg = hasBody ? "dto" : "";
+		const executeArgs = [usesId ? "id" : "", hasBody ? "input" : ""].filter(Boolean).join(", ");
 		const returnStatement = update.responseDtoName
-			? `return ${update.responseDtoName}.fromOutput(await this.${update.useCasePropertyName}.execute(${executeArg}));`
-			: `return await this.${update.useCasePropertyName}.execute(${executeArg});`;
+			? `return ${update.responseDtoName}.fromOutput(await this.${update.useCasePropertyName}.execute(${executeArgs}));`
+			: `return await this.${update.useCasePropertyName}.execute(${executeArgs});`;
+		const statements = hasBody && update.applicationDtoName ? [`const input: ${update.applicationDtoName} = { ...dto };`, returnStatement] : [returnStatement];
 
 		controllerClass.addMethod({
 			name: update.methodName,
 			isAsync: true,
 			returnType,
-			parameters: hasBody ? [{ name: "dto", type: update.bodyDtoName, decorators: [{ name: "Body", arguments: [] }] }] : [],
+			parameters: [
+				...(usesId ? [{ name: "id", type: "string", decorators: [{ name: "Param", arguments: ['"id"'] }] }] : []),
+				...(hasBody ? [{ name: "dto", type: update.bodyDtoName, decorators: [{ name: "Body", arguments: [] }] }] : []),
+			],
 			decorators: [{ name: update.httpMethod, arguments: update.httpPath ? [`"${update.httpPath}"`] : [] }],
-			statements: [returnStatement],
+			statements,
 		});
 	}
 

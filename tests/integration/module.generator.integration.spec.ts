@@ -81,6 +81,31 @@ describe("module generator integration", () => {
 			expect(controllerFile).toContain("CreateUserUseCase");
 			expect(controllerFile).toContain("@Post()");
 			expect(controllerFile).toContain("createUser");
+			expect(controllerFile).toContain("const input: CreateUserDto = { ...dto };");
+		} finally {
+			process.chdir(previousCwd);
+			rmSync(tempDir, { recursive: true, force: true });
+		}
+	});
+
+	it("gera Param para use-case com rota por id", async () => {
+		const previousCwd = process.cwd();
+		const tempDir = createTempProject("-param");
+
+		try {
+			process.chdir(tempDir);
+			await ModuleGenerator.generate("user", { path: "/", spec: true, orm: "typeorm" });
+			await UseCaseGenerator.generate("user", { path: "/", spec: true, orm: "typeorm" }, "delete-user");
+
+			const controllerFile = readFileSync(path.join(tempDir, "src", "modules", "user", "presentation", "controllers", "user.controller.ts"), "utf8");
+			expect(controllerFile).toContain('Param("id")');
+			expect(controllerFile).toContain("deleteUser(@Param");
+
+			const useCaseFile = readFileSync(
+				path.join(tempDir, "src", "modules", "user", "application", "use-cases", "delete-user", "delete-user.use-case.ts"),
+				"utf8"
+			);
+			expect(useCaseFile).toContain("async execute(id: string): Promise<void>");
 		} finally {
 			process.chdir(previousCwd);
 			rmSync(tempDir, { recursive: true, force: true });
