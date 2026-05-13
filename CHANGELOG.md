@@ -23,6 +23,8 @@
 - Added separated application DTO and presentation DTO generation.
 - Added formatting preference sync from `clean-nest.json` or `.prettierrc`.
 - Added snake_case plural table names for TypeORM entities.
+- Added `.editorconfig` generation.
+- Added `config init` and `config set` commands for local CLI preferences.
 
 ### Changed
 
@@ -31,3 +33,5 @@
 - `use-case|uc` now creates application use cases and updates the module controller.
 - The CLI project now builds with TypeScript 6.0.3.
 - Generated projects now include `ConfigModule`, global validation, and Swagger setup.
+- Internal file templates are now grouped by app/layer/infrastructure responsibility.
+- Controllers now map request DTOs into application DTOs before calling use cases.

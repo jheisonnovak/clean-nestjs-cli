@@ -88,6 +88,23 @@ Options:
 - `--layer <domain|application>`: used by `error`.
 - `--no-spec`: disables spec generation where applicable.
 
+### `config`
+
+Creates or updates local CLI preferences.
+
+```bash
+cnest config init
+cnest config set formatting.indentation spaces
+cnest config set formatting.tabWidth 2
+cnest config set formatting.printWidth 100
+```
+
+`config init` writes:
+
+- `clean-nest.json`
+- `.prettierrc`
+- `.editorconfig`
+
 ## Configuration
 
 Version 3 projects include:
@@ -111,7 +128,7 @@ The ORM resolution order is:
 2. `clean-nest.json`.
 3. `typeorm` fallback.
 
-When creating a project, the CLI also reads formatting preferences from an existing `clean-nest.json` or `.prettierrc` in the current directory and writes them into the generated project.
+When creating a project, the CLI also reads formatting preferences from an existing `clean-nest.json` or `.prettierrc` in the current directory and writes them into the generated project. Generated projects always include `.editorconfig`.
 
 ## Folder Structure
 
