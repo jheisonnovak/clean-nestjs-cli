@@ -2,7 +2,7 @@ import chalk from "chalk";
 import * as fs from "fs";
 import inquirer from "inquirer";
 import * as path from "path";
-import { repositoryInterfaceElement } from "../elements/repository-interface.element";
+import { repositoryInterfaceElement } from "../elements/domain/repository-interface.element";
 import { resolveOrm } from "../utils/clean-config";
 import { createModulePath } from "../utils/create-module-path";
 import { createFile, formatFile, startsInBasePath } from "../utils/file";

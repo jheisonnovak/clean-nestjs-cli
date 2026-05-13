@@ -1,4 +1,4 @@
-import { DEFAULT_FORMATTING, FormattingPreferences } from "../utils/clean-config";
+import { DEFAULT_FORMATTING, FormattingPreferences } from "../../utils/clean-config";
 
 export const prettierrcElement = (formatting: FormattingPreferences = DEFAULT_FORMATTING): string => `{
 	"printWidth": ${formatting.printWidth},

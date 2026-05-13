@@ -3,10 +3,10 @@ import * as fs from "fs";
 import inquirer from "inquirer";
 import * as path from "path";
 import { plural } from "pluralize";
-import { applicationDtoElement } from "../elements/application-dto.element";
-import { presentationRequestDtoElement } from "../elements/presentation-dto.element";
-import { specElement } from "../elements/spec.element";
-import { useCaseElement } from "../elements/use-case.element";
+import { applicationDtoElement } from "../elements/application/dto.element";
+import { specElement } from "../elements/application/spec.element";
+import { useCaseElement } from "../elements/application/use-case.element";
+import { presentationRequestDtoElement } from "../elements/presentation/dto.element";
 import { createModulePath } from "../utils/create-module-path";
 import { createFile, decapitalize, formatFile, startsInBasePath } from "../utils/file";
 import { getRouteFromAction } from "../utils/get-route-from-action";
@@ -73,6 +73,8 @@ export class UseCaseGenerator extends IGenerator {
 		const isDelete = resourceNameKebab.startsWith("delete-") || resourceNameKebab.startsWith("remove-");
 		const inputDtoName = shouldUseBody ? `${capitalizedUseCaseName}Dto` : undefined;
 		const responseDtoName = isDelete ? undefined : `${moduleName}ResponseDto`;
+		const route = this.getControllerRoute(moduleNameKebab, resourceNameKebab);
+		const usesId = route.path?.includes(":id") ?? false;
 
 		if (inputDtoName) {
 			await createFile(path.join(resourceDir, "application/dtos", `${resourceNameKebab}.dto.ts`), applicationDtoElement(inputDtoName));
@@ -84,7 +86,14 @@ export class UseCaseGenerator extends IGenerator {
 
 		await createFile(
 			path.join(useCaseDir, `${resourceNameKebab}.use-case.ts`),
-			useCaseElement(capitalizedUseCaseName, inputDtoName, responseDtoName ? outputDtoName : undefined)
+			useCaseElement({
+				capitalizedUseCaseName,
+				inputDtoFileName: resourceNameKebab,
+				inputDtoName,
+				outputDtoFileName: `${moduleNameKebab}-output`,
+				outputDtoName: responseDtoName ? outputDtoName : undefined,
+				usesId,
+			})
 		);
 		if (options.spec) {
 			await createFile(
@@ -103,8 +112,9 @@ export class UseCaseGenerator extends IGenerator {
 		await formatFile(moduleFilePath);
 
 		const controllerFilePath = path.join(resourceDir, "presentation/controllers", `${moduleNameKebab}.controller.ts`);
-		const route = this.getControllerRoute(moduleNameKebab, resourceNameKebab);
 		updateControllerFile(controllerFilePath, {
+			applicationDtoName: inputDtoName,
+			applicationDtoPath: inputDtoName ? `../../application/dtos/${resourceNameKebab}.dto` : undefined,
 			bodyDtoName: inputDtoName ? `${capitalizedUseCaseName}RequestDto` : undefined,
 			bodyDtoPath: inputDtoName ? `../dtos/${resourceNameKebab}.request.dto` : undefined,
 			httpMethod: route.method,
