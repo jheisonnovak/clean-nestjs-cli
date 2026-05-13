@@ -5,7 +5,9 @@
 
 ## Description
 
-A command-line interface tool designed to streamline the creation and management of [Nest](https://github.com/nestjs/nest) projects following Clean Architecture principles.
+A command-line interface for creating NestJS projects and modules using a layered Clean Architecture.
+
+Version 3 generates a new module structure with explicit `domain`, `application`, `infrastructure`, and `presentation` layers. The old v2 flat structure is no longer generated.
 
 ## Installation
 
@@ -13,133 +15,148 @@ A command-line interface tool designed to streamline the creation and management
 npm install -g clean-nestjs-cli
 ```
 
-Or
+Or:
 
 ```bash
 yarn global add clean-nestjs-cli
 ```
 
-Or
+Or:
 
 ```bash
 pnpm add -g clean-nestjs-cli
 ```
 
-## Global Options
-
-`-v, --version`: Outputs the current version of the CLI.
-
-Example:
-
-```bash
-clean-nest -v
-```
-
-`-h, --help`: Displays help with all available commands and their options.
-
-Example:
-
-```bash
-clean-nest -h
-```
-
 ## Usage
 
-After installation, you can access the CLI using the `clean-nest` or `cnest` command.
+Use either `clean-nest` or `cnest`.
 
 ```bash
 cnest <command> [options]
 ```
 
-### Available Commands
+## Commands
 
-`new <project-name> [options]`
+### `new <project-name>`
 
-Creates a new project with a clean and structured setup.
-
-**Alias**: `n`
+Creates a new NestJS project and writes a `clean-nest.json` file.
 
 ```bash
-cnest new my-new-project
+cnest new my-api
 ```
 
-**Options:**
+Options:
 
--   `--no-linters`: Disables linters (enabled by default).
+- `--no-linters`: disables ESLint and Prettier files.
 
-    Example:
+During creation, choose one persistence option:
 
-    ```bash
-    cnest new my-new-project --no-linters
-    ```
+- `typeorm`
+- `prisma`
+- `none`
 
-#### `generate <schematics> <module> [resource] [options]`
+### `generate <schematic> <module> [resource]`
 
-Generates a new element in your project, such as modules or resources.
-
-**Alias**: `g`
+Generates files inside `src/modules`.
 
 ```bash
 cnest generate module user
+cnest generate use-case user create-user
+cnest generate repository user profile
+cnest generate entity user address
+cnest generate error user user-not-found --layer application
 ```
 
-Available schematics: **[module|mo, repository|rp, use-case|uc]**
+Alias:
 
-**Options:**
+```bash
+cnest g module user
+```
 
--   `--path <path>`: Specifies the destination directory inside the `/src/modules` folder. The default path is the module root (`/`).
+Available schematics:
 
-    Example:
+- `module|mo`
+- `repository|rp`
+- `use-case|uc`
+- `entity|e`
+- `error|er`
 
-    ```bash
-    cnest generate module user --path auth
-    ```
+Options:
 
--   `--no-spec`: Do not generate a spec files
+- `--path <path>`: destination path inside `src/modules`.
+- `--orm <typeorm|prisma|none>`: overrides the ORM from `clean-nest.json`.
+- `--layer <domain|application>`: used by `error`.
+- `--no-spec`: disables spec generation where applicable.
 
-    Example:
+## Configuration
 
-    ```bash
-    cnest generate use-case user find-all --no-spec
-    ```
+Version 3 projects include:
+
+```json
+{
+	"version": 3,
+	"architecture": "layered-clean",
+	"orm": "typeorm"
+}
+```
+
+The ORM resolution order is:
+
+1. `--orm` command option.
+2. `clean-nest.json`.
+3. `typeorm` fallback.
 
 ## Folder Structure
 
-When using the `new` command, a [Nest](https://github.com/nestjs/nest) project with the following clean structure will be created:
+Generated modules follow this structure:
 
+```txt
+src/modules/user/
+  user.module.ts
+  domain/
+    entities/
+    enums/
+    errors/
+    repositories/
+  application/
+    dtos/
+    errors/
+    ports/
+    use-cases/
+  infrastructure/
+    persistence/
+    repositories/
+    mappers/
+  presentation/
+    controllers/
+    dtos/
+    mappers/
 ```
-my-new-project/
-├──src/
-│  ├── modules/
-│  │   ├── module-example/
-│  │   │   ├── models/
-│  │   │   │   ├── dtos/
-│  │   │   │   ├── entities/
-│  │   │   │   ├── interfaces/
-│  │   │   │   ├── enums/
-│  │   │   ├── repositories/
-│  │   │   ├── use-cases/
-│  │   │   │   ├── use-case-example-1/
-│  │   │   │   └── use-case-example-2/
-│  ├── app.module.ts
-│  ├── main.ts
-│  ├── shared/
-│  │   ├── databases/
-└── ...
-```
 
-## Contribution
+Layer rules:
 
-Contributions are welcome! Feel free to open issues and pull requests on the official repository.
+- `domain` does not depend on NestJS, ORM libraries, or other layers.
+- `application` depends on `domain`.
+- `presentation` depends on `application`.
+- `infrastructure` depends on `domain` and may implement `application/ports`.
+
+## Version 3 Breaking Changes
+
+- The v2 flat folders `models`, `repositories`, and root `use-cases` are no longer generated.
+- Controllers are generated per module in `presentation/controllers`, not beside each use case.
+- Repository contracts live in `domain/repositories`.
+- Repository injection tokens use exported symbols such as `USER_REPOSITORY`.
+- TypeORM and Prisma generate different infrastructure adapter files.
+- Existing v2 projects are not migrated automatically.
 
 ## Author
 
 **Jheison Novak**
 
--   [GitHub Profile](https://github.com/jheisonnovak)
--   [LinkedIn Profile](https://www.linkedin.com/in/jheison-novak)
+- [GitHub Profile](https://github.com/jheisonnovak)
+- [LinkedIn Profile](https://www.linkedin.com/in/jheison-novak)
 
 ## License
 
-Copyright © 2024, [Jheison Novak](https://github.com/jheisonnovak).
+Copyright (c) 2024, [Jheison Novak](https://github.com/jheisonnovak).
 Released under the [MIT License](LICENSE).
