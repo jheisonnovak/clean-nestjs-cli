@@ -33,6 +33,7 @@ describe("dependency contracts", () => {
 		const commands = program.commands.map(command => command.name());
 		expect(commands).toContain("new");
 		expect(commands).toContain("generate");
+		expect(commands).toContain("config");
 	});
 
 	it("parse de comando preserva argumentos com aspas", async () => {
