@@ -96,7 +96,12 @@ Version 3 projects include:
 {
 	"version": 3,
 	"architecture": "layered-clean",
-	"orm": "typeorm"
+	"orm": "typeorm",
+	"formatting": {
+		"indentation": "tabs",
+		"printWidth": 150,
+		"tabWidth": 4
+	}
 }
 ```
 
@@ -105,6 +110,8 @@ The ORM resolution order is:
 1. `--orm` command option.
 2. `clean-nest.json`.
 3. `typeorm` fallback.
+
+When creating a project, the CLI also reads formatting preferences from an existing `clean-nest.json` or `.prettierrc` in the current directory and writes them into the generated project.
 
 ## Folder Structure
 

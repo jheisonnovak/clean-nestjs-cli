@@ -21,6 +21,8 @@
 - Added `entity|e` schematic.
 - Added `error|er` schematic with `--layer domain|application`.
 - Added separated application DTO and presentation DTO generation.
+- Added formatting preference sync from `clean-nest.json` or `.prettierrc`.
+- Added snake_case plural table names for TypeORM entities.
 
 ### Changed
 
@@ -28,3 +30,4 @@
 - `repository|rp` now creates domain contracts plus infrastructure adapters.
 - `use-case|uc` now creates application use cases and updates the module controller.
 - The CLI project now builds with TypeScript 6.0.3.
+- Generated projects now include `ConfigModule`, global validation, and Swagger setup.
