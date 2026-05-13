@@ -2,7 +2,7 @@ import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import path from "path";
 import { describe, expect, it } from "vitest";
-import { cleanNestConfigElement, normalizeOrm, readCleanNestConfig, resolveOrm } from "../../src/utils/clean-config";
+import { cleanNestConfigElement, normalizeOrm, readCleanNestConfig, readFormattingPreferences, resolveOrm } from "../../src/utils/clean-config";
 
 describe("clean config", () => {
 	it("normaliza ORMs suportados", () => {
@@ -19,9 +19,26 @@ describe("clean config", () => {
 
 		try {
 			expect(readCleanNestConfig(tempDir)?.orm).toBe("prisma");
+			expect(readFormattingPreferences(tempDir).indentation).toBe("tabs");
 			expect(resolveOrm("typeorm", tempDir)).toBe("typeorm");
 			expect(resolveOrm(undefined, tempDir)).toBe("prisma");
 			expect(resolveOrm(undefined, path.join(tempDir, "missing"))).toBe("typeorm");
+		} finally {
+			rmSync(tempDir, { recursive: true, force: true });
+		}
+	});
+
+	it("sincroniza preferencias de formatacao a partir do prettierrc", () => {
+		const tempDir = path.join(tmpdir(), `clean-nestjs-cli-formatting-${Date.now()}`);
+		mkdirSync(tempDir, { recursive: true });
+		writeFileSync(path.join(tempDir, ".prettierrc"), JSON.stringify({ useTabs: false, tabWidth: 2, printWidth: 100 }), "utf8");
+
+		try {
+			expect(readFormattingPreferences(tempDir)).toEqual({
+				indentation: "spaces",
+				printWidth: 100,
+				tabWidth: 2,
+			});
 		} finally {
 			rmSync(tempDir, { recursive: true, force: true });
 		}

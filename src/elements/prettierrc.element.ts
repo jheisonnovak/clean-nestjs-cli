@@ -1,11 +1,13 @@
-export const prettierrcElement = (): string => `{
-	"printWidth": 150,
+import { DEFAULT_FORMATTING, FormattingPreferences } from "../utils/clean-config";
+
+export const prettierrcElement = (formatting: FormattingPreferences = DEFAULT_FORMATTING): string => `{
+	"printWidth": ${formatting.printWidth},
 	"arrowParens": "avoid",
 	"formatOnSave": true,
 	"singleQuote": false,
-	"useTabs": true,
+	"useTabs": ${formatting.indentation === "tabs"},
 	"trailingComma": "es5",
 	"endOfLine": "auto",
-	"tabWidth": 4
+	"tabWidth": ${formatting.tabWidth}
 }
 `;
