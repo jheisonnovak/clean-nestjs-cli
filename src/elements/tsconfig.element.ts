@@ -8,6 +8,7 @@ export const tsconfigElement = (): string => `{
 		"allowSyntheticDefaultImports": true,
 		"target": "ES2023",
 		"sourceMap": true,
+		"rootDir": "./src",
 		"outDir": "./dist",
 		"baseUrl": "./",
 		"incremental": true,
@@ -16,7 +17,8 @@ export const tsconfigElement = (): string => `{
 		"noImplicitAny": false,
 		"strictBindCallApply": false,
 		"forceConsistentCasingInFileNames": false,
-		"noFallthroughCasesInSwitch": false
+		"noFallthroughCasesInSwitch": false,
+		"types": ["node", "jest"]
 	}
 }
 `;

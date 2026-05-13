@@ -16,7 +16,7 @@ import { prismaServiceElement } from "../elements/prisma-service.element";
 import { readmeElement } from "../elements/readme.element";
 import { tsconfigBuildElement } from "../elements/tsconfig-build.element";
 import { tsconfigElement } from "../elements/tsconfig.element";
-import { cleanNestConfigElement, normalizeOrm, Orm } from "../utils/clean-config";
+import { cleanNestConfigElement, normalizeOrm, Orm, readFormattingPreferences } from "../utils/clean-config";
 import { executeCommand } from "../utils/execute-command";
 import { createFile } from "../utils/file";
 import { getInstallCommand } from "../utils/get-install-command";
@@ -34,6 +34,7 @@ export class AppGenerator {
 				const { packageManager, orm } = answers;
 				const normalizedOrm = normalizeOrm(orm) ?? "typeorm";
 				this.createDir(projectDir);
+				const formatting = readFormattingPreferences(process.cwd());
 				const commands: string[] = [];
 				commands.push(`${packageManager} ${getInstallCommand(packageManager)} clean-nestjs-cli -D`);
 				if (normalizedOrm === "typeorm") commands.push(`${packageManager} ${getInstallCommand(packageManager)} @nestjs/typeorm typeorm`);
@@ -47,7 +48,7 @@ export class AppGenerator {
 				const generatingFiles = ora("Generating files...");
 				try {
 					await executeCommand(`${packageManager} --version`, projectDir);
-					await this.generateFiles(projectName, projectDir, options.linters, normalizedOrm, packageManager);
+					await this.generateFiles(projectName, projectDir, options.linters, normalizedOrm, packageManager, formatting);
 					generatingFiles.succeed("Files generated");
 					dependencies.start();
 					for (const command of commands) {
@@ -66,7 +67,8 @@ export class AppGenerator {
 		projectDir: string,
 		linters: boolean,
 		orm: Orm,
-		packageManager: string
+		packageManager: string,
+		formatting = readFormattingPreferences()
 	): Promise<void> {
 		const tsConfigContent = tsconfigElement();
 		const tsConfigBuildContent = tsconfigBuildElement();
@@ -78,13 +80,13 @@ export class AppGenerator {
 		const appE2eSpecContent = appE2eSpecElement();
 		const jestE2eContent = jestE2eElement();
 		if (linters) {
-			const prettierrcContent = prettierrcElement();
+			const prettierrcContent = prettierrcElement(formatting);
 			const eslintrcContent = eslintElement();
 			await createFile(path.join(projectDir, ".prettierrc"), prettierrcContent);
 			await createFile(path.join(projectDir, "eslint.config.mjs"), eslintrcContent);
 		}
 		await createFile(path.join(projectDir, "README.md"), readmeContent);
-		await createFile(path.join(projectDir, "clean-nest.json"), cleanNestConfigElement(orm));
+		await createFile(path.join(projectDir, "clean-nest.json"), cleanNestConfigElement(orm, formatting));
 		await createFile(path.join(projectDir, "tsconfig.json"), tsConfigContent);
 		await createFile(path.join(projectDir, "tsconfig.build.json"), tsConfigBuildContent);
 		await createFile(path.join(projectDir, "package.json"), packageContent);
