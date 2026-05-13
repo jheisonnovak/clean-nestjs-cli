@@ -10,7 +10,7 @@ import { typeOrmPersistenceElement } from "../elements/persistence.element";
 import { presentationResponseDtoElement } from "../elements/presentation-dto.element";
 import { repositoryInterfaceElement } from "../elements/repository-interface.element";
 import { prismaRepositoryElement, typeOrmRepositoryElement } from "../elements/repository.element";
-import { cleanNestConfigElement, Orm, resolveOrm } from "../utils/clean-config";
+import { cleanNestConfigElement, Orm, readFormattingPreferences, resolveOrm } from "../utils/clean-config";
 import { createModulePath } from "../utils/create-module-path";
 import { capitalize, createFile, formatFile, kebabToCamel, startsInBasePath } from "../utils/file";
 import {
@@ -18,6 +18,7 @@ import {
 	repositoryImplementationName,
 	repositoryInterfaceName,
 	repositoryTokenName,
+	toTableName,
 	toPascalCase,
 } from "../utils/naming";
 import { IFileModuleUpdate, updateModuleFile } from "../utils/update-module-file";
@@ -34,7 +35,7 @@ export class ModuleGenerator extends IGenerator {
 		const resourceDir = path.join(basePath, modulePath);
 		startsInBasePath(basePath, resourceDir);
 
-		await createFile(path.join(process.cwd(), "clean-nest.json"), cleanNestConfigElement(orm));
+		await createFile(path.join(process.cwd(), "clean-nest.json"), cleanNestConfigElement(orm, readFormattingPreferences()));
 		await this.createLayerDirectories(resourceDir);
 		await this.createCoreFiles(resourceDir, moduleNameKebab, moduleName, orm);
 		await this.updateFeatureModule(resourceDir, moduleNameKebab, moduleName, orm);
@@ -104,7 +105,7 @@ export class ModuleGenerator extends IGenerator {
 			const persistenceName = persistenceEntityName(resourceNameKebab, "typeorm");
 			await createFile(
 				path.join(resourceDir, "infrastructure/persistence", `${resourceNameKebab}.orm.entity.ts`),
-				typeOrmPersistenceElement(persistenceName, resourceNameKebab)
+				typeOrmPersistenceElement(persistenceName, toTableName(resourceNameKebab))
 			);
 			await createFile(
 				path.join(resourceDir, "infrastructure/mappers", `${resourceNameKebab}.mapper.ts`),

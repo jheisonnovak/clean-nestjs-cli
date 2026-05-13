@@ -8,7 +8,7 @@ import { typeOrmPersistenceElement } from "../elements/persistence.element";
 import { resolveOrm } from "../utils/clean-config";
 import { createModulePath } from "../utils/create-module-path";
 import { createFile, startsInBasePath } from "../utils/file";
-import { persistenceEntityName, toPascalCase } from "../utils/naming";
+import { persistenceEntityName, toPascalCase, toTableName } from "../utils/naming";
 import { IGenerator, IGeneratorOptions } from "./generate.generator";
 import { ModuleGenerator } from "./module.generator";
 
@@ -61,7 +61,7 @@ export class EntityGenerator extends IGenerator {
 			const persistenceName = persistenceEntityName(resourceNameKebab, "typeorm");
 			await createFile(
 				path.join(resourceDir, "infrastructure/persistence", `${resourceNameKebab}.orm.entity.ts`),
-				typeOrmPersistenceElement(persistenceName, resourceNameKebab)
+				typeOrmPersistenceElement(persistenceName, toTableName(resourceNameKebab))
 			);
 			await createFile(
 				path.join(resourceDir, "infrastructure/mappers", `${resourceNameKebab}.mapper.ts`),

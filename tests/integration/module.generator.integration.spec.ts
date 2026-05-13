@@ -44,6 +44,9 @@ describe("module generator integration", () => {
 			expect(moduleFile).toContain("TypeOrmModule.forFeature([UserTypeOrmEntity])");
 			expect(moduleFile).toContain("USER_REPOSITORY");
 
+			const persistenceFile = readFileSync(path.join(moduleRoot, "infrastructure", "persistence", "user.orm.entity.ts"), "utf8");
+			expect(persistenceFile).toContain('@Entity({ name: "users" })');
+
 			const domainRepository = readFileSync(path.join(moduleRoot, "domain", "repositories", "user.repository.ts"), "utf8");
 			expect(domainRepository).not.toMatch(/@nestjs|typeorm|prisma|application|infrastructure|presentation/);
 
@@ -101,6 +104,27 @@ describe("module generator integration", () => {
 			const moduleFile = readFileSync(path.join(moduleRoot, "notification.module.ts"), "utf8");
 			expect(moduleFile).not.toContain("TypeOrmModule");
 			expect(moduleFile).toContain("DELIVERY_REPOSITORY");
+		} finally {
+			process.chdir(previousCwd);
+			rmSync(tempDir, { recursive: true, force: true });
+		}
+	});
+
+	it("gera entity TypeORM com tabela snake_case plural", async () => {
+		const previousCwd = process.cwd();
+		const tempDir = createTempProject("-entity");
+
+		try {
+			process.chdir(tempDir);
+			await ModuleGenerator.generate("auth", { path: "/", spec: true, orm: "typeorm" });
+			const { EntityGenerator } = await import("../../src/generators/entity.generator");
+			await EntityGenerator.generate("auth", { path: "/", spec: true, orm: "typeorm" }, "refresh-token");
+
+			const entityFile = readFileSync(
+				path.join(tempDir, "src", "modules", "auth", "infrastructure", "persistence", "refresh-token.orm.entity.ts"),
+				"utf8"
+			);
+			expect(entityFile).toContain('@Entity({ name: "refresh_tokens" })');
 		} finally {
 			process.chdir(previousCwd);
 			rmSync(tempDir, { recursive: true, force: true });
