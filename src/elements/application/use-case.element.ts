@@ -4,6 +4,7 @@ export interface UseCaseElementOptions {
 	inputDtoName?: string;
 	outputDtoFileName?: string;
 	outputDtoName?: string;
+	outputIsArray?: boolean;
 	usesId?: boolean;
 }
 
@@ -13,6 +14,7 @@ export const useCaseElement = ({
 	inputDtoName,
 	outputDtoFileName,
 	outputDtoName,
+	outputIsArray,
 	usesId,
 }: UseCaseElementOptions): string => `import { Injectable } from "@nestjs/common";
 ${inputDtoName && inputDtoFileName ? `import { ${inputDtoName} } from "../../dtos/${inputDtoFileName}.dto";` : ""}${
@@ -21,9 +23,9 @@ ${inputDtoName && inputDtoFileName ? `import { ${inputDtoName} } from "../../dto
 
 @Injectable()
 export class ${capitalizedUseCaseName}UseCase {
-	async execute(${[usesId ? "id: string" : "", inputDtoName ? `dto: ${inputDtoName}` : ""].filter(Boolean).join(", ")}): Promise<${outputDtoName ?? "void"}> {
+	async execute(${[usesId ? "id: string" : "", inputDtoName ? `dto: ${inputDtoName}` : ""].filter(Boolean).join(", ")}): Promise<${outputDtoName ? `${outputDtoName}${outputIsArray ? "[]" : ""}` : "void"}> {
 		// Implement the use case
-		${outputDtoName ? `return ${outputDtoName}.empty();` : ""}
+		${outputDtoName ? `return ${outputIsArray ? "[]" : `${outputDtoName}.empty()`};` : ""}
 	}
 }
 `;

@@ -15,6 +15,13 @@ export const toSnakeCase = (value: string): string =>
 
 export const toTableName = (value: string): string => plural(toSnakeCase(value));
 
+const conventionalSingularRoutes = new Set(["auth", "health", "login", "logout", "me"]);
+
+export const toRoutePath = (value: string): string => {
+	if (conventionalSingularRoutes.has(value)) return value;
+	return plural(value);
+};
+
 export const repositoryTokenName = (resourceNameKebab: string): string => `${toConstantCase(resourceNameKebab)}_REPOSITORY`;
 
 export const repositoryInterfaceName = (resourceNameKebab: string): string => `${toPascalCase(resourceNameKebab)}Repository`;

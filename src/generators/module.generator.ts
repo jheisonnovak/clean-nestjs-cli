@@ -1,6 +1,5 @@
 import * as fs from "fs";
 import * as path from "path";
-import { plural } from "pluralize";
 import { outputDtoElement } from "../elements/application/output-dto.element";
 import { domainEntityElement } from "../elements/domain/entity.element";
 import { repositoryInterfaceElement } from "../elements/domain/repository-interface.element";
@@ -21,6 +20,7 @@ import {
 	repositoryTokenName,
 	toTableName,
 	toPascalCase,
+	toRoutePath,
 } from "../utils/naming";
 import { IFileModuleUpdate, updateModuleFile } from "../utils/update-module-file";
 import { IGenerator, IGeneratorOptions } from "./generate.generator";
@@ -89,7 +89,7 @@ export class ModuleGenerator extends IGenerator {
 		);
 		await createFile(
 			path.join(resourceDir, "presentation/controllers", `${resourceNameKebab}.controller.ts`),
-			controllerElement(moduleName, plural(resourceNameKebab))
+			controllerElement(moduleName, toRoutePath(resourceNameKebab))
 		);
 
 		if (orm === "typeorm" || orm === "prisma") {

@@ -6,14 +6,26 @@ type RouteDefinition = {
 };
 
 export function getRouteFromAction(action: string): RouteDefinition {
+	const isFindById = action.startsWith("find-one") || action.startsWith("find-by-id") || action.startsWith("get-one") || action.startsWith("get-by-id");
 	const words = action.replace("-one", "").replace("-by-id", "").split("-");
 	const resource = words.slice(1).join("-");
 	const verb = words[0];
 	const pluralizedPath = resource ? plural(resource) : "";
 	switch (verb) {
+		case "login":
+		case "register":
+		case "refresh":
+			return { method: "Post", path: action };
+
+		case "logout":
+			return { method: "Post", path: action };
+
 		case "find":
 		case "list":
 		case "get":
+			if (isFindById) {
+				return { method: "Get", path: pluralizedPath ? `${pluralizedPath}/:id` : ":id" };
+			}
 			return { method: "Get", path: pluralizedPath };
 
 		case "create":

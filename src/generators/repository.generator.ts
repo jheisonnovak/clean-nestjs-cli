@@ -2,11 +2,12 @@ import chalk from "chalk";
 import * as fs from "fs";
 import inquirer from "inquirer";
 import * as path from "path";
+import { domainEntityElement } from "../elements/domain/entity.element";
 import { repositoryInterfaceElement } from "../elements/domain/repository-interface.element";
 import { resolveOrm } from "../utils/clean-config";
 import { createModulePath } from "../utils/create-module-path";
 import { createFile, formatFile, startsInBasePath } from "../utils/file";
-import { persistenceEntityName, repositoryImplementationName, repositoryInterfaceName, repositoryTokenName } from "../utils/naming";
+import { persistenceEntityName, repositoryImplementationName, repositoryInterfaceName, repositoryTokenName, toPascalCase } from "../utils/naming";
 import { IFileModuleUpdate, updateModuleFile } from "../utils/update-module-file";
 import { IGenerator, IGeneratorOptions } from "./generate.generator";
 import { ModuleGenerator } from "./module.generator";
@@ -60,6 +61,7 @@ export class RepositoryGenerator extends IGenerator {
 
 		const repositoryContract = repositoryInterfaceName(resourceNameKebab);
 		const tokenName = repositoryTokenName(resourceNameKebab);
+		await createFile(path.join(resourceDir, "domain/entities", `${resourceNameKebab}.entity.ts`), domainEntityElement(toPascalCase(resourceNameKebab)));
 		await createFile(
 			path.join(resourceDir, "domain/repositories", `${resourceNameKebab}.repository.ts`),
 			repositoryInterfaceElement(repositoryContract, tokenName)

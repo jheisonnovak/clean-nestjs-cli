@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { existsSync, writeFileSync } from "fs";
 import path from "path";
 import { Project, Scope } from "ts-morph";
+import { formatGeneratedContent } from "./formatting";
 
 export interface ControllerMethodUpdate {
 	applicationDtoName?: string;
@@ -13,6 +14,7 @@ export interface ControllerMethodUpdate {
 	httpPath?: string;
 	responseDtoName?: string;
 	responseDtoPath?: string;
+	responseIsArray?: boolean;
 	useCaseName: string;
 	useCasePath: string;
 	useCasePropertyName: string;
@@ -65,12 +67,17 @@ export function updateControllerFile(controllerFilePath: string, update: Control
 
 	if (!controllerClass.getMethod(update.methodName)) {
 		const hasBody = Boolean(update.bodyDtoName);
-		const returnType = update.responseDtoName ? `Promise<${update.responseDtoName}>` : "Promise<void>";
+		const responseType = update.responseDtoName ? `${update.responseDtoName}${update.responseIsArray ? "[]" : ""}` : undefined;
+		const returnType = responseType ? `Promise<${responseType}>` : "Promise<void>";
 		const executeArgs = [usesId ? "id" : "", hasBody ? "input" : ""].filter(Boolean).join(", ");
+		const useCaseCall = `await this.${update.useCasePropertyName}.execute(${executeArgs})`;
 		const returnStatement = update.responseDtoName
-			? `return ${update.responseDtoName}.fromOutput(await this.${update.useCasePropertyName}.execute(${executeArgs}));`
+			? update.responseIsArray
+				? `return (${useCaseCall}).map(output => ${update.responseDtoName}.fromOutput(output));`
+				: `return ${update.responseDtoName}.fromOutput(${useCaseCall});`
 			: `return await this.${update.useCasePropertyName}.execute(${executeArgs});`;
-		const statements = hasBody && update.applicationDtoName ? [`const input: ${update.applicationDtoName} = { ...dto };`, returnStatement] : [returnStatement];
+		const statements =
+			hasBody && update.applicationDtoName ? [`const input: ${update.applicationDtoName} = { ...dto };`, returnStatement] : [returnStatement];
 
 		controllerClass.addMethod({
 			name: update.methodName,
@@ -85,7 +92,7 @@ export function updateControllerFile(controllerFilePath: string, update: Control
 		});
 	}
 
-	writeFileSync(controllerFilePath, sourceFile.getFullText(), "utf8");
+	writeFileSync(controllerFilePath, formatGeneratedContent(sourceFile.getFullText()), "utf8");
 	console.log(`${chalk.yellow("UPDATE")} ${relativePath}`);
 }
 
