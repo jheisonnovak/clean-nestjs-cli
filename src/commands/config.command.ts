@@ -3,14 +3,8 @@ import { writeFileSync } from "fs";
 import path from "path";
 import { editorConfigElement } from "../elements/app/editorconfig.element";
 import { prettierrcElement } from "../elements/app/prettierrc.element";
-import {
-	cleanNestConfigElement,
-	DEFAULT_FORMATTING,
-	DEFAULT_ORM,
-	FormattingPreferences,
-	readFormattingPreferences,
-	resolveOrm,
-} from "../utils/clean-config";
+import { cleanNestConfigElement, DEFAULT_ORM, FormattingPreferences, readFormattingPreferences, resolveOrm } from "../utils/clean-config";
+import { formatGeneratedContent } from "../utils/formatting";
 
 export class ConfigCommand {
 	async load(program: Command): Promise<void> {
@@ -28,17 +22,22 @@ export class ConfigCommand {
 
 		config
 			.command("set <key> <value>")
-			.description("set a formatting preference. Keys: formatting.indentation, formatting.tabWidth, formatting.printWidth")
+			.description("set a formatting preference and sync clean-nest.json, .prettierrc and .editorconfig")
 			.action((key: string, value: string) => {
 				const formatting = this.updateFormatting(readFormattingPreferences(), key, value);
 				this.writeConfigFiles(resolveOrm(), formatting);
+				console.log("Formatting preferences synced. Run your formatter to update existing files.");
 			});
 	}
 
 	private writeConfigFiles(orm: "typeorm" | "prisma" | "none", formatting: FormattingPreferences): void {
-		writeFileSync(path.join(process.cwd(), "clean-nest.json"), cleanNestConfigElement(orm, formatting), "utf8");
-		writeFileSync(path.join(process.cwd(), ".prettierrc"), prettierrcElement(formatting), "utf8");
-		writeFileSync(path.join(process.cwd(), ".editorconfig"), editorConfigElement(formatting), "utf8");
+		writeFileSync(
+			path.join(process.cwd(), "clean-nest.json"),
+			formatGeneratedContent(cleanNestConfigElement(orm, formatting), formatting),
+			"utf8"
+		);
+		writeFileSync(path.join(process.cwd(), ".prettierrc"), formatGeneratedContent(prettierrcElement(formatting), formatting), "utf8");
+		writeFileSync(path.join(process.cwd(), ".editorconfig"), formatGeneratedContent(editorConfigElement(formatting), formatting), "utf8");
 	}
 
 	private updateFormatting(formatting: FormattingPreferences, key: string, value: string): FormattingPreferences {

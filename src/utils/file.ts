@@ -3,6 +3,7 @@ import { existsSync, promises as fs, mkdirSync } from "fs";
 import path, { join } from "path";
 import { SourceFile, SyntaxKind } from "ts-morph";
 import { executeCommand } from "./execute-command";
+import { formatGeneratedContent } from "./formatting";
 
 export const createFile = async (filePath: string, content: string): Promise<void> => {
 	const relativePath = path.relative(process.cwd(), filePath);
@@ -17,7 +18,7 @@ export const createFile = async (filePath: string, content: string): Promise<voi
 		await fs.mkdir(dir, { recursive: true });
 	}
 	try {
-		await fs.writeFile(filePath, content, "utf8");
+		await fs.writeFile(filePath, formatGeneratedContent(content), "utf8");
 		console.log(`${chalk.green("CREATE")} ${relativePath}`);
 	} catch (error) {
 		throw error;
