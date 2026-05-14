@@ -2,6 +2,7 @@ import { existsSync, mkdirSync } from "fs";
 import inquirer, { DistinctQuestion } from "inquirer";
 import ora from "ora";
 import * as path from "path";
+import packageJson from "../../package.json";
 import { appE2eSpecElement } from "../elements/app/app-e2e-spec.element";
 import { appModuleElement } from "../elements/app/app-module.element";
 import { editorConfigElement } from "../elements/app/editorconfig.element";
@@ -11,8 +12,10 @@ import { gitIgnoreElement } from "../elements/app/gitignore.element";
 import { jestE2eElement } from "../elements/app/jest-e2e.element";
 import { mainElement } from "../elements/app/main.element";
 import { packageElement } from "../elements/app/package.element";
+import { pnpmWorkspaceElement } from "../elements/app/pnpm-workspace.element";
 import { prettierrcElement } from "../elements/app/prettierrc.element";
 import { prismaModuleElement } from "../elements/app/prisma-module.element";
+import { prismaSchemaElement } from "../elements/app/prisma-schema.element";
 import { prismaServiceElement } from "../elements/app/prisma-service.element";
 import { readmeElement } from "../elements/app/readme.element";
 import { tsconfigBuildElement } from "../elements/app/tsconfig-build.element";
@@ -37,12 +40,11 @@ export class AppGenerator {
 				this.createDir(projectDir);
 				const formatting = readFormattingPreferences(process.cwd());
 				const commands: string[] = [];
-				commands.push(`${packageManager} ${getInstallCommand(packageManager)} clean-nestjs-cli -D`);
-				if (normalizedOrm === "typeorm") commands.push(`${packageManager} ${getInstallCommand(packageManager)} @nestjs/typeorm typeorm`);
+				if (normalizedOrm === "typeorm") commands.push(`${packageManager} ${getInstallCommand(packageManager)} @nestjs/typeorm typeorm sqlite3`);
 				else if (normalizedOrm === "prisma") {
-					commands.push(`${packageManager} ${getInstallCommand(packageManager)} prisma -D`);
-					commands.push(`${packageManager} ${getInstallCommand(packageManager)} @prisma/client`);
-					commands.push(`npx prisma init`);
+					commands.push(`${packageManager} ${getInstallCommand(packageManager)} prisma@6.19.3 -D`);
+					commands.push(`${packageManager} ${getInstallCommand(packageManager)} @prisma/client@6.19.3`);
+					commands.push(this.getPrismaCommand(packageManager, "generate"));
 				}
 				commands.push(`${packageManager} install`);
 				const dependencies = ora("Installing dependencies...");
@@ -51,6 +53,9 @@ export class AppGenerator {
 					await executeCommand(`${packageManager} --version`, projectDir);
 					await this.generateFiles(projectName, projectDir, options.linters, normalizedOrm, packageManager, formatting);
 					generatingFiles.succeed("Files generated");
+					if (await this.isCliPackageVersionPublished(projectDir)) {
+						commands.unshift(`${packageManager} ${getInstallCommand(packageManager)} clean-nestjs-cli@${packageJson.version} -D`);
+					}
 					dependencies.start();
 					for (const command of commands) {
 						await executeCommand(command, projectDir);
@@ -74,7 +79,7 @@ export class AppGenerator {
 		const tsConfigContent = tsconfigElement();
 		const tsConfigBuildContent = tsconfigBuildElement();
 		const packageContent = packageElement(projectName, linters);
-		const appModuleContent = appModuleElement();
+		const appModuleContent = appModuleElement(orm);
 		const mainContent = mainElement();
 		const gitIgnoreContent = gitIgnoreElement();
 		const readmeContent = readmeElement(packageManager);
@@ -89,6 +94,9 @@ export class AppGenerator {
 		await createFile(path.join(projectDir, ".editorconfig"), editorConfigElement(formatting));
 		await createFile(path.join(projectDir, "README.md"), readmeContent);
 		await createFile(path.join(projectDir, "clean-nest.json"), cleanNestConfigElement(orm, formatting));
+		if (packageManager === "pnpm") {
+			await createFile(path.join(projectDir, "pnpm-workspace.yaml"), pnpmWorkspaceElement());
+		}
 		await createFile(path.join(projectDir, "tsconfig.json"), tsConfigContent);
 		await createFile(path.join(projectDir, "tsconfig.build.json"), tsConfigBuildContent);
 		await createFile(path.join(projectDir, "package.json"), packageContent);
@@ -101,6 +109,8 @@ export class AppGenerator {
 			const databaseConfigContent = databaseConfigElement();
 			await createFile(path.join(projectDir, "src", "shared", "databases", "database.config.service.ts"), databaseConfigContent);
 		} else if (orm === "prisma") {
+			await createFile(path.join(projectDir, ".env"), 'DATABASE_URL="file:./dev.db"\n');
+			await createFile(path.join(projectDir, "prisma", "schema.prisma"), prismaSchemaElement());
 			await createFile(path.join(projectDir, "src", "shared", "databases", "prisma.service.ts"), prismaServiceElement());
 			await createFile(path.join(projectDir, "src", "shared", "databases", "prisma.module.ts"), prismaModuleElement());
 		}
@@ -129,6 +139,21 @@ export class AppGenerator {
 	private static createDir(dir: string): void {
 		if (!existsSync(dir)) {
 			mkdirSync(dir, { recursive: true });
+		}
+	}
+
+	private static getPrismaCommand(packageManager: string, command: string): string {
+		if (packageManager === "pnpm") return `pnpm exec prisma ${command}`;
+		if (packageManager === "yarn") return `yarn prisma ${command}`;
+		return `npx prisma ${command}`;
+	}
+
+	private static async isCliPackageVersionPublished(projectDir: string): Promise<boolean> {
+		try {
+			await executeCommand(`npm view clean-nestjs-cli@${packageJson.version} version`, projectDir);
+			return true;
+		} catch {
+			return false;
 		}
 	}
 }

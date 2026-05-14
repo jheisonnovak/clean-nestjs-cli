@@ -2,20 +2,35 @@ export const databaseConfigElement = (): string => `import { Injectable } from "
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from "@nestjs/typeorm";
 
+type DatabaseType = "sqlite" | "postgres" | "mysql" | "mariadb";
+
 @Injectable()
 export class DatabaseConfigService implements TypeOrmOptionsFactory {
-	constructor(private configService: ConfigService) {}
+	constructor(private readonly configService: ConfigService) {}
 
 	createTypeOrmOptions(): TypeOrmModuleOptions {
+		const type = this.configService.get<DatabaseType>("DB_TYPE") ?? "sqlite";
+		const baseOptions = {
+			entities: [__dirname + "/../../**/*.orm.entity.{js,ts}"],
+			synchronize: this.configService.get<string>("DB_SYNCHRONIZE") === "true",
+		};
+
+		if (type === "sqlite") {
+			return {
+				...baseOptions,
+				type: "sqlite",
+				database: this.configService.get<string>("DB_DATABASE") ?? "database.sqlite",
+			};
+		}
+
 		return {
-			//type: "database",
-			host: this.configService.get<string>("DB_ENV"),
-			port: this.configService.get<number>("DB_ENV"),
-			username: this.configService.get<string>("DB_ENV"),
-			password: this.configService.get<string>("DB_ENV"),
-			database: this.configService.get<string>("DB_ENV"),
-			entities: [__dirname + "/../../**/*.entity.{js,ts}"],
-			synchronize: false,
+			...baseOptions,
+			type,
+			host: this.configService.get<string>("DB_HOST") ?? "localhost",
+			port: this.configService.get<number>("DB_PORT") ?? 5432,
+			username: this.configService.get<string>("DB_USERNAME") ?? "root",
+			password: this.configService.get<string>("DB_PASSWORD") ?? "",
+			database: this.configService.get<string>("DB_DATABASE") ?? "app",
 		};
 	}
 }

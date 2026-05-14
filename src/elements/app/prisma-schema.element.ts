@@ -1,0 +1,9 @@
+export const prismaSchemaElement = (): string => `generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+`;

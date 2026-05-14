@@ -10,7 +10,6 @@ export const tsconfigElement = (): string => `{
 		"sourceMap": true,
 		"rootDir": "./src",
 		"outDir": "./dist",
-		"baseUrl": "./",
 		"incremental": true,
 		"skipLibCheck": true,
 		"strictNullChecks": false,
@@ -19,6 +18,8 @@ export const tsconfigElement = (): string => `{
 		"forceConsistentCasingInFileNames": false,
 		"noFallthroughCasesInSwitch": false,
 		"types": ["node", "jest"]
-	}
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules", "dist", "test"]
 }
 `;
