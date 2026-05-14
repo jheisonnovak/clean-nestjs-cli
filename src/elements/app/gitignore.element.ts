@@ -2,6 +2,7 @@ export const gitIgnoreElement = (): string => `# compiled output
 /dist
 /node_modules
 /build
+tsconfig.build.tsbuildinfo
 
 # Logs
 logs

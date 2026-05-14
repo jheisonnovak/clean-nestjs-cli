@@ -8,15 +8,18 @@ export const tsconfigElement = (): string => `{
 		"allowSyntheticDefaultImports": true,
 		"target": "ES2023",
 		"sourceMap": true,
+		"rootDir": "./src",
 		"outDir": "./dist",
-		"baseUrl": "./",
 		"incremental": true,
 		"skipLibCheck": true,
 		"strictNullChecks": false,
 		"noImplicitAny": false,
 		"strictBindCallApply": false,
 		"forceConsistentCasingInFileNames": false,
-		"noFallthroughCasesInSwitch": false
-	}
+		"noFallthroughCasesInSwitch": false,
+		"types": ["node", "jest"]
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules", "dist", "test"]
 }
 `;

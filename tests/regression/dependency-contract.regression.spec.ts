@@ -13,6 +13,10 @@ describe("dependency contracts", () => {
 		expect(getGenerator("rp")?.name).toBe("RepositoryGenerator");
 		expect(getGenerator("use-case")?.name).toBe("UseCaseGenerator");
 		expect(getGenerator("uc")?.name).toBe("UseCaseGenerator");
+		expect(getGenerator("entity")?.name).toBe("EntityGenerator");
+		expect(getGenerator("e")?.name).toBe("EntityGenerator");
+		expect(getGenerator("error")?.name).toBe("ErrorGenerator");
+		expect(getGenerator("er")?.name).toBe("ErrorGenerator");
 		expect(getGenerator("unknown")).toBeNull();
 	});
 
@@ -20,6 +24,10 @@ describe("dependency contracts", () => {
 		expect(getRouteFromAction("create-user")).toEqual({ method: "Post", path: "users" });
 		expect(getRouteFromAction("update-user")).toEqual({ method: "Patch", path: "users/:id" });
 		expect(getRouteFromAction("delete-user")).toEqual({ method: "Delete", path: "users/:id" });
+		expect(getRouteFromAction("find-one")).toEqual({ method: "Get", path: ":id" });
+		expect(getRouteFromAction("find-one-user")).toEqual({ method: "Get", path: "users/:id" });
+		expect(getRouteFromAction("login")).toEqual({ method: "Post", path: "login" });
+		expect(getRouteFromAction("logout")).toEqual({ method: "Post", path: "logout" });
 	});
 
 	it("registra comandos esperados no commander", async () => {
@@ -29,6 +37,7 @@ describe("dependency contracts", () => {
 		const commands = program.commands.map(command => command.name());
 		expect(commands).toContain("new");
 		expect(commands).toContain("generate");
+		expect(commands).toContain("config");
 	});
 
 	it("parse de comando preserva argumentos com aspas", async () => {

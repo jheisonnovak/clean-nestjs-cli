@@ -11,15 +11,15 @@ export const executeCommand = (command: string, projectDir: string): Promise<str
 		let stdout = "";
 		let stderr = "";
 
-		child.stdout?.on("data", data => {
+		child.stdout?.on("data", (data: Buffer) => {
 			stdout += data.toString();
 		});
 
-		child.stderr?.on("data", data => {
+		child.stderr?.on("data", (data: Buffer) => {
 			stderr += data.toString();
 		});
 
-		child.on("close", code => {
+		child.on("close", (code: number | null) => {
 			if (code !== 0) {
 				reject(new Error(`Command failed with exit code ${code}: ${stderr}`));
 			} else {
@@ -27,7 +27,7 @@ export const executeCommand = (command: string, projectDir: string): Promise<str
 			}
 		});
 
-		child.on("error", err => {
+		child.on("error", (err: Error) => {
 			reject(err);
 		});
 	});

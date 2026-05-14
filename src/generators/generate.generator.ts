@@ -6,6 +6,9 @@ export abstract class IGenerator {
 }
 
 export interface IGeneratorOptions {
+	controller: boolean;
 	path: string;
 	spec: boolean;
+	orm?: string;
+	layer?: string;
 }

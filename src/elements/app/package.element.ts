@@ -18,30 +18,34 @@ export const packageElement = (projectName: string, linters: boolean): string =>
 		"test:e2e": "jest --config ./test/jest-e2e.json"
 	},
 	"dependencies": {
-		"@nestjs/common": "^11.0.13",
-		"@nestjs/core": "^11.0.13",
-		"@nestjs/platform-express": "^11.0.13",
+		"@nestjs/common": "^11.1.17",
+		"@nestjs/config": "^4.0.4",
+		"@nestjs/core": "^11.1.18",
+		"@nestjs/platform-express": "^11.1.17",
+		"@nestjs/swagger": "^11.2.7",
+		"class-transformer": "^0.5.1",
+		"class-validator": "^0.15.1",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1"
 	},
 	"devDependencies": {
-		"@nestjs/cli": "^11.0.0",
-		"@nestjs/schematics": "^11.0.0",
-		"@nestjs/testing": "^11.0.13",
+		"@nestjs/cli": "^11.0.16",
+		"@nestjs/schematics": "^11.1.0",
+		"@nestjs/testing": "^11.1.17",
 		"@types/express": "^5.0.0",
-		"@types/jest": "^29.5.14",
-		"@types/node": "^22.10.7",
+		"@types/jest": "^30.0.0",
+		"@types/node": "^25.4.0",
 		"@types/supertest": "^6.0.2",${linters ? `\n		"eslint": "^9.18.0",` : ""}${linters ? `\n		"eslint-config-prettier": "^10.0.1",` : ""}${
 			linters ? `\n		"eslint-plugin-prettier": "^5.2.2",` : ""
 		}
-		"jest": "^29.7.0",${linters ? `\n		"prettier": "^3.4.2",` : ""}
+		"jest": "^30.3.0",${linters ? `\n		"prettier": "^3.4.2",` : ""}
 		"source-map-support": "^0.5.21",
 		"supertest": "^7.0.0",
-		"ts-jest": "^29.2.5",
+		"ts-jest": "^29.4.5",
 		"ts-loader": "^9.5.2",
 		"ts-node": "^10.9.2",
 		"tsconfig-paths": "^4.2.0",
-		"typescript": "^5.7.3"${linters ? `\n		,"typescript-eslint": "^8.20.0"` : ""}
+		"typescript": "^6.0.3"${linters ? `\n		,"typescript-eslint": "^8.20.0"` : ""}
 	},
 	"jest": {
 		"moduleFileExtensions": [

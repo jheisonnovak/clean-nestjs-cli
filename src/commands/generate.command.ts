@@ -10,12 +10,16 @@ export class GenerateCommand {
 			.alias("g")
 			.description(`generate a specified element. Available schematics: [${getNameAliasPairs()}]`)
 			.option("--path <path>", "specify the destination directory inside /src/modules folder", "/")
+			.option("--orm <orm>", "specify persistence adapter: typeorm, prisma or none")
+			.option("--layer <layer>", "specify layer for layer-aware schematics: domain or application")
+			.option("--no-controller", "do not generate or update presentation controller files")
 			.option("--no-spec", "do not generate a spec files")
 			.action((element, module: string, resource: string, options: IGeneratorOptions) => {
 				const generator = getGenerator(element);
 				if (!generator) {
 					console.error(`"${element}" not found. Available schematics: [${getNameAliasPairs()}]`);
 					process.exit(1);
+					return;
 				}
 				isValidName(module);
 				isValidName(resource);

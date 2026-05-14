@@ -3,6 +3,7 @@ import { existsSync, promises as fs, mkdirSync } from "fs";
 import path, { join } from "path";
 import { SourceFile, SyntaxKind } from "ts-morph";
 import { executeCommand } from "./execute-command";
+import { formatGeneratedContent } from "./formatting";
 
 export const createFile = async (filePath: string, content: string): Promise<void> => {
 	const relativePath = path.relative(process.cwd(), filePath);
@@ -17,7 +18,7 @@ export const createFile = async (filePath: string, content: string): Promise<voi
 		await fs.mkdir(dir, { recursive: true });
 	}
 	try {
-		await fs.writeFile(filePath, content, "utf8");
+		await fs.writeFile(filePath, formatGeneratedContent(content), "utf8");
 		console.log(`${chalk.green("CREATE")} ${relativePath}`);
 	} catch (error) {
 		throw error;
@@ -48,6 +49,7 @@ export const addToModuleArray = (
 	if (!classWithModule) {
 		console.error("Module decorator not found in the file.");
 		process.exit(1);
+		throw new Error("Module decorator not found in the file.");
 	}
 
 	const decorator = classWithModule.getDecorator("Module");
@@ -56,6 +58,7 @@ export const addToModuleArray = (
 	if (!arg || !arg.compilerNode || arg.getKind() !== SyntaxKind.ObjectLiteralExpression) {
 		console.error("Module decorator argument not found or is not an object literal.");
 		process.exit(1);
+		throw new Error("Module decorator argument not found or is not an object literal.");
 	}
 
 	const objLiteral = arg.asKindOrThrow(SyntaxKind.ObjectLiteralExpression);

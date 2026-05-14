@@ -3,6 +3,7 @@ import { existsSync, writeFileSync } from "fs";
 import path from "path";
 import { Project } from "ts-morph";
 import { addToModuleArray } from "./file";
+import { formatGeneratedContent } from "./formatting";
 
 export function updateModuleFile(moduleFilePath: string, filesModuleUpdate: IFileModuleUpdate[]): void {
 	const relativePath = path.relative(process.cwd(), moduleFilePath);
@@ -15,7 +16,7 @@ export function updateModuleFile(moduleFilePath: string, filesModuleUpdate: IFil
 
 	filesModuleUpdate.forEach(fileModuleUpdate => {
 		if (fileModuleUpdate.imports) {
-			const existingImport = sourceFile.getImportDeclarations().find(decl => decl.getModuleSpecifierValue() === fileModuleUpdate.imports?.name);
+			const existingImport = sourceFile.getImportDeclarations().find(decl => decl.getModuleSpecifierValue() === fileModuleUpdate.imports?.path);
 			if (existingImport) {
 				const namedImports = existingImport.getNamedImports();
 				if (!namedImports.some(ni => ni.getName() === fileModuleUpdate.imports?.name)) {
@@ -33,7 +34,7 @@ export function updateModuleFile(moduleFilePath: string, filesModuleUpdate: IFil
 			sourceFile = addToModuleArray(sourceFile, arrayName, fileModuleUpdate.content);
 		});
 	});
-	writeFileSync(moduleFilePath, sourceFile.getFullText(), "utf8");
+	writeFileSync(moduleFilePath, formatGeneratedContent(sourceFile.getFullText()), "utf8");
 	console.log(`${chalk.yellow("UPDATE")} ${relativePath}`);
 }
 
