@@ -28,8 +28,7 @@ import { getInstallCommand } from "../utils/get-install-command";
 export class AppGenerator {
 	static async generate(projectNameKebab: string, options: { linters: boolean }): Promise<void> {
 		const projectDir = path.join(process.cwd(), projectNameKebab);
-		const resourceArray = projectDir.split("\\");
-		const projectName = resourceArray[resourceArray.length - 1];
+		const projectName = path.basename(projectDir);
 		const questions = this.getQuestions();
 		console.clear();
 		inquirer
