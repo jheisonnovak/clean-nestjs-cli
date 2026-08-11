@@ -34,7 +34,7 @@
 	},
 	"homepage": "https://github.com/jheisonnovak/clean-nestjs-cli#readme",
 	"dependencies": {
-		"chalk": "^5.5.0",
+		"chalk": "^6.0.0",
 		"commander": "^14.0.0",
 		"inquirer": "^13.3.0",
 		"ora": "^9.0.0",
